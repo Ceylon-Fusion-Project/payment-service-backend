@@ -1,6 +1,6 @@
-package com.ceylon_fusion.payment_service.payment;
+package com.ceylon_fusion.payment_service.entity;
 
-import com.ceylon_fusion.payment_service.payment.enums.PaymentStatus;
+import com.ceylon_fusion.payment_service.entity.enums.PaymentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,7 +13,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @AllArgsConstructor
@@ -24,7 +23,7 @@ public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long paymentId;
 
     @NotNull
     @Column(name="user_id")
@@ -39,10 +38,6 @@ public class Payment {
     @DecimalMin(value="0.0", inclusive=false)
     @NotNull
     private Double amount;
-
-    @NotEmpty
-    @Pattern(regexp ="CARD", message="invalid payment method")
-    private String paymentMethod;
 
     @NotEmpty
     @Column(name="payment_status")

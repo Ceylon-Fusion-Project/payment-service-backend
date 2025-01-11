@@ -1,0 +1,65 @@
+package com.ceylon_fusion.payment_service.entity;
+
+import com.ceylon_fusion.payment_service.entity.enums.PaymentMethodsStatus;
+import com.ceylon_fusion.payment_service.entity.enums.Provider;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Table(name="payment_methods")
+public class PaymentMethod {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long paymentMethodId;
+
+    @Column(name="method_name")
+    private String methodName;
+
+    @NotNull
+    @Column(name="is_active")
+    private Boolean isActive;
+
+    @NotNull(message = "User ID is required")
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @NotNull(message = "Default status is required")
+    @Column(name = "is_default", nullable = false)
+    private Boolean isDefault;
+
+    @NotEmpty(message = "Masked details can't be empty")
+    @Pattern(regexp = "\\*{4} \\*{4} \\*{4} \\d{4}",message = "Masked details must follow the format **** **** **** 1234")
+    @Column(name = "masked_details", nullable = false)
+    private String maskedDetails;
+
+    @NotNull(message="Provider is required")
+    @Column(name="provider" ,nullable=false)
+    private Provider provider;
+
+    @NotNull(message="Status is required")
+    @Column(name="status", nullable=false)
+    private PaymentMethodsStatus status;
+
+    @CreationTimestamp
+    @Column(name="created_at",nullable=false,updatable=false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name ="updated_at", nullable=false)
+    private LocalDateTime updatedAt;
+
+
+}
