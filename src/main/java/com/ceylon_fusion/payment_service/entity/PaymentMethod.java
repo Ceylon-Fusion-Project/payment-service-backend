@@ -45,10 +45,12 @@ public class PaymentMethod {
     @Column(name = "masked_details", nullable = false)
     private String maskedDetails;
 
+    @Enumerated(EnumType.STRING)
     @NotNull(message="Provider is required")
     @Column(name="provider" ,nullable=false)
     private Provider provider;
 
+    @Enumerated(EnumType.STRING)
     @NotNull(message="Status is required")
     @Column(name="status", nullable=false)
     private PaymentMethodsStatus status;

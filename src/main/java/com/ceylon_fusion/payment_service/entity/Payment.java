@@ -35,11 +35,14 @@ public class Payment {
     @Column(name="bookng_id")
     private Long bookingId;
 
+    private Long paymentMethodId;
+
     @DecimalMin(value="0.0", inclusive=false)
     @NotNull
     private Double amount;
 
     @NotEmpty
+    @Enumerated(EnumType.STRING)
     @Column(name="payment_status")
     private PaymentStatus paymentStatus;
 

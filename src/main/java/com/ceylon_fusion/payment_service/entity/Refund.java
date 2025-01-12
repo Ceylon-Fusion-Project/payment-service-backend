@@ -31,6 +31,7 @@ public class Refund {
     @Size(max=255)
     private String refundReason;
 
+    @Enumerated(EnumType.STRING)
     @NotEmpty
     @Column(name="refund_status")
     private RefundStatus refundStatus;

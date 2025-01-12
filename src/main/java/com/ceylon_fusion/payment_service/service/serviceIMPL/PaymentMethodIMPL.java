@@ -1,4 +1,8 @@
 package com.ceylon_fusion.payment_service.service.serviceIMPL;
 
-public class PaymentMethodIMPL {
+import com.ceylon_fusion.payment_service.service.PaymentMethodService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class PaymentMethodIMPL implements PaymentMethodService {
 }
