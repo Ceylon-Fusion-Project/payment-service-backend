@@ -10,19 +10,15 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public class RefundMapper {
+public interface RefundMapper {
 
     // Entity to DTO
     @org.mapstruct.Mapping(source = "refundId", target = "refundId")
     @org.mapstruct.Mapping(source = "paymentId", target = "paymentId")
     @org.mapstruct.Mapping(source = "refundStatus", target = "refundStatus")
-    RefundDTO refundToRefundDTO(Refund refund) {
-        return null;
-    }
+    RefundDTO refundToRefundDTO(Refund refund);
 
-    List<RefundDTO> refundsToRefundDTOs(List<Refund> refunds) {
-        return null;
-    }
+    List<RefundDTO> refundsToRefundDTOs(List<Refund> refunds);
 
     // Entity to Response DTO
     @org.mapstruct.Mapping(source = "refundId", target = "refundId")
@@ -31,14 +27,10 @@ public class RefundMapper {
     @org.mapstruct.Mapping(source = "transactionDate", target = "transactionDate")
     @org.mapstruct.Mapping(source = "createdAt", target = "createdAt")
     @org.mapstruct.Mapping(source = "updatedAt", target = "updatedAt")
-    RefundDetailsResponseDTO refundToRefundDetailsResponseDTO(Refund refund) {
-        return null;
-    }
+    RefundDetailsResponseDTO refundToRefundDetailsResponseDTO(Refund refund);
 
     // Request DTO to Entity
     @org.mapstruct.Mapping(source = "paymentId", target = "paymentId")
     @org.mapstruct.Mapping(source = "refundReason", target = "refundReason")
-    Refund initiateRefundRequestDTOToRefund(InitiateRefundRequestDTO initiateRefundRequestDTO) {
-        return null;
-    }
+    Refund initiateRefundRequestDTOToRefund(InitiateRefundRequestDTO initiateRefundRequestDTO) ;
 }
