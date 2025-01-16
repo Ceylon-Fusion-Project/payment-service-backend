@@ -2,6 +2,7 @@ package com.ceylon_fusion.payment_service.entity;
 
 import com.ceylon_fusion.payment_service.entity.enums.RefundStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -30,6 +31,10 @@ public class Refund {
 
     @Size(max=255)
     private String refundReason;
+
+    @DecimalMin(value="0.0", inclusive=false)
+    @NotNull
+    private Double amount;
 
     @Enumerated(EnumType.STRING)
     @NotEmpty

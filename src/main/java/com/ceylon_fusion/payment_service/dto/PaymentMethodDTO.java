@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 public class PaymentMethodDTO {
 
     private Long paymentMethodId;
-    private String methodNAme;
+    private String methodName;
     private Boolean isActive;
+    private String maskedDetails;
     private Provider provider;
 }

@@ -13,13 +13,13 @@ import java.util.List;
 public interface PaymentMethodMapper {
 
     // Entity to DTO
-    @org.mapstruct.Mapping(source = "methodName", target = "methodNAme")
+    @org.mapstruct.Mapping(source = "methodName", target = "methodName")
     PaymentMethodDTO paymentMethodToPaymentMethodDTO(PaymentMethod paymentMethod);
 
     List<PaymentMethodDTO> paymentMethodsToPaymentMethodDTOs(List<PaymentMethod> paymentMethods);
 
     // Entity to Response DTO
-    @org.mapstruct.Mapping(source = "methodName", target = "methodNAme")
+    @org.mapstruct.Mapping(source = "methodName", target = "methodName")
     @org.mapstruct.Mapping(source = "isActive", target = "isActive")
     @org.mapstruct.Mapping(source = "isDefault", target = "isDefault")
     @org.mapstruct.Mapping(source = "provider", target = "provider")
@@ -30,7 +30,7 @@ public interface PaymentMethodMapper {
     PaymentMethodDetailsResponseDTO paymentMethodToPaymentMethodDetailsResponseDTO(PaymentMethod paymentMethod);
 
     // Request DTO to Entity
-    @org.mapstruct.Mapping(source = "methodNAme", target = "methodName")
+    @org.mapstruct.Mapping(source = "methodName", target = "methodName")
     @org.mapstruct.Mapping(source = "isActive", target = "isActive")
     @org.mapstruct.Mapping(source = "isDefault", target = "isDefault")
     @org.mapstruct.Mapping(source = "userId", target = "userId")

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreatePaymentMethodRequestDTO {
 
-    private String methodNAme;
+    private String methodName;
     private Boolean isActive;
     private Boolean isDefault;
     private Long userId;

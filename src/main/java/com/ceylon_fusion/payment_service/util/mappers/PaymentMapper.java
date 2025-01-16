@@ -11,16 +11,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface PaymentMapper {
 
-//    PaymentDTO paymentToPaymentDTO(Payment payment);
-//
-//    List<PaymentDTO> paymentsToPaymentDTOs(List<Payment> payments);
-//
-//    PaymentDetailsResponseDTO paymentToPaymentDetailsResponseDTO(Payment payment);
-//
-//    Payment createPaymentRequestDTOToPayment(CreatePaymentRequestDTO createPaymentRequestDTO);
-//
-//    void updatePaymentFromDTO(PaymentDTO paymentDTO, @MappingTarget Payment payment);
-
     // Entity to DTO
     PaymentDTO paymentToPaymentDTO(Payment payment);
 
@@ -42,5 +32,7 @@ public interface PaymentMapper {
     @org.mapstruct.Mapping(source = "bookingId", target = "bookingId")
     @org.mapstruct.Mapping(source = "amount", target = "amount")
     Payment createPaymentRequestDTOToPayment(CreatePaymentRequestDTO createPaymentRequestDTO);
+
+    PaymentDTO map(Payment savedPayment, Class<PaymentDTO> paymentDTOClass);
 
 }

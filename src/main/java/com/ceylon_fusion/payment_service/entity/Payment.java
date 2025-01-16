@@ -1,5 +1,6 @@
 package com.ceylon_fusion.payment_service.entity;
 
+import com.ceylon_fusion.payment_service.entity.enums.Currency;
 import com.ceylon_fusion.payment_service.entity.enums.PaymentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -57,6 +58,7 @@ public class Payment {
     @Column(name="updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-
+    @NotNull
+    private Currency currency;
 
 }
