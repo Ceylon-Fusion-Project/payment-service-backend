@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class RefundDetailsResponseDTO {
 
     private Long refundId;
-    private String paymentId;
+    private Long paymentId;
     private RefundStatus refundStatus;
     private LocalDateTime transactionDate;
     private LocalDateTime createdAt;

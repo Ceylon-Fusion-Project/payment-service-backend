@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class RefundDTO {
 
     private Long refundId;
-    private String paymentId;
+    private Long paymentId;
     private RefundStatus refundStatus;
     private Double amount;
 

@@ -15,6 +15,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -66,17 +69,8 @@ public class PaymentMethod {
     @Column(name ="updated_at", nullable=false)
     private LocalDateTime updatedAt;
 
-    // OneToMany -> Payment
-    @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    @ToString.Exclude
-    private Set<Payment> payments;
-
-    // OneToMany -> Refund
-    @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    @ToString.Exclude
-    private Set<Refund> refunds;
+    @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL)
+    private Set<Payment> payments = new HashSet<>();
 
 
 }

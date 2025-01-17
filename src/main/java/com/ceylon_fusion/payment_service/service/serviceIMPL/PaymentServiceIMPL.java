@@ -6,6 +6,9 @@ import com.ceylon_fusion.payment_service.dto.request.CreatePaymentRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.PaymentFilterRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.UpdatePaymentRequestDTO;
 import com.ceylon_fusion.payment_service.dto.response.PaymentDetailsResponseDTO;
+import com.ceylon_fusion.payment_service.entity.Payment;
+import com.ceylon_fusion.payment_service.entity.enums.PaymentStatus;
+import com.ceylon_fusion.payment_service.repo.PaymentMethodRepo;
 import com.ceylon_fusion.payment_service.repo.PaymentRepo;
 import com.ceylon_fusion.payment_service.service.PaymentService;
 import com.ceylon_fusion.payment_service.util.mappers.PaymentMapper;
@@ -26,13 +29,16 @@ public class PaymentServiceIMPL implements PaymentService {
 
     @Autowired
     private  PaymentRepo paymentRepo;
-   @Autowired
+    @Autowired
+    private PaymentMethodRepo paymentMethodRepo;
+    @Autowired
     private  PaymentMapper paymentMapper;
 
 
     @Override
     public PaymentDetailsResponseDTO saveOrderPayment(CreatePaymentRequestDTO createPaymentRequestDTO) {
         return null;
+
     }
 
     @Override

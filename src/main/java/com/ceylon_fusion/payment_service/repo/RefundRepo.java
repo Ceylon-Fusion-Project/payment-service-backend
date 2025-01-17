@@ -14,8 +14,4 @@ import java.util.Optional;
 @EnableJpaRepositories
 public interface RefundRepo extends JpaRepository<Refund,Long> {
 
-    List<Refund> findByPaymentId(String paymentId);
-    List<Refund> findByRefundStatus(RefundStatus status);
-    List<Refund> findByTransactionDateBetween(LocalDateTime startDate, LocalDateTime endDate);
-    Optional<Refund> findByRefundIdAndPaymentId(Long refundId, String paymentId);
 }

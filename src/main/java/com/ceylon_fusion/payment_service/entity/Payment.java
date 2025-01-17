@@ -17,6 +17,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -38,8 +40,6 @@ public class Payment {
 
     @Column(name="bookng_id")
     private Long bookingId;
-
-    private Long paymentMethodId;
 
     @DecimalMin(value="0.0", inclusive=false)
     @NotNull
@@ -64,18 +64,23 @@ public class Payment {
     @NotNull
     private Currency currency;
 
-    // ManyToOne -> PaymentMethod
-    @ManyToOne
-    @JoinColumn(name = "payment_method_id")
-    @JsonBackReference
-    @ToString.Exclude
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id", nullable = false)
     private PaymentMethod paymentMethod;
 
-    // OneToOne -> Refund
-    @OneToOne(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    @ToString.Exclude
-    private Refund refund;
+    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Refund> refunds = new HashSet<>();
 
+    // Helper method to manage bidirectional relationship
+    public void addRefund(Refund refund) {
+        refunds.add(refund);
+        refund.setPayment(this);
+    }
+
+    public void removeRefund(Refund refund) {
+        refunds.remove(refund);
+        refund.setPayment(null);
+    }
 
 }

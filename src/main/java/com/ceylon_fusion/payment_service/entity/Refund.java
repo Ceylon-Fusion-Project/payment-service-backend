@@ -27,9 +27,10 @@ public class Refund {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long refundId;
 
-    @NotNull
-    @Column(name="payment_id")
-    private String paymentId;
+//    @NotNull
+//    @Column(name="payment_id")
+//    private Long paymentId;
+
 
     @Size(max=255)
     private String refundReason;
@@ -56,18 +57,7 @@ public class Refund {
     @Column(name="updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    // ManyToOne -> PaymentMethod
-    @ManyToOne
-    @JoinColumn(name = "payment_method_id")
-    @JsonBackReference
-    @ToString.Exclude
-    private PaymentMethod paymentMethod;
-
-    // OneToOne -> Payment
-    @OneToOne
-    @JoinColumn(name = "payment_id")
-    @JsonBackReference
-    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id", nullable = false)
     private Payment payment;
-
 }

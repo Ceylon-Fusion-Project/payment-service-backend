@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class InitiateRefundRequestDTO {
 
-    private String paymentId;
+    private Long paymentId;
     private String refundReason;
 }
