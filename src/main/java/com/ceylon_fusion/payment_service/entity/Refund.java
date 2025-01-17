@@ -1,6 +1,7 @@
 package com.ceylon_fusion.payment_service.entity;
 
 import com.ceylon_fusion.payment_service.entity.enums.RefundStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -54,5 +56,18 @@ public class Refund {
     @Column(name="updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    // ManyToOne -> PaymentMethod
+    @ManyToOne
+    @JoinColumn(name = "payment_method_id")
+    @JsonBackReference
+    @ToString.Exclude
+    private PaymentMethod paymentMethod;
+
+    // OneToOne -> Payment
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    @JsonBackReference
+    @ToString.Exclude
+    private Payment payment;
 
 }

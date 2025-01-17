@@ -2,6 +2,7 @@ package com.ceylon_fusion.payment_service.entity;
 
 import com.ceylon_fusion.payment_service.entity.enums.PaymentMethodsStatus;
 import com.ceylon_fusion.payment_service.entity.enums.Provider;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -9,10 +10,12 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -62,6 +65,18 @@ public class PaymentMethod {
     @UpdateTimestamp
     @Column(name ="updated_at", nullable=false)
     private LocalDateTime updatedAt;
+
+    // OneToMany -> Payment
+    @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
+    private Set<Payment> payments;
+
+    // OneToMany -> Refund
+    @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
+    private Set<Refund> refunds;
 
 
 }

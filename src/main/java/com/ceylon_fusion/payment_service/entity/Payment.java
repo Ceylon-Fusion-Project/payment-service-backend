@@ -2,6 +2,8 @@ package com.ceylon_fusion.payment_service.entity;
 
 import com.ceylon_fusion.payment_service.entity.enums.Currency;
 import com.ceylon_fusion.payment_service.entity.enums.PaymentStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
@@ -10,6 +12,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -60,5 +63,19 @@ public class Payment {
 
     @NotNull
     private Currency currency;
+
+    // ManyToOne -> PaymentMethod
+    @ManyToOne
+    @JoinColumn(name = "payment_method_id")
+    @JsonBackReference
+    @ToString.Exclude
+    private PaymentMethod paymentMethod;
+
+    // OneToOne -> Refund
+    @OneToOne(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
+    private Refund refund;
+
 
 }
