@@ -41,7 +41,7 @@ public class Refund {
 
     @Enumerated(EnumType.STRING)
     @NotEmpty
-    @Column(name="refund_status")
+    @Column(name="refund_status", columnDefinition = "VARCHAR(50)")
     private RefundStatus refundStatus;
 
     @NotEmpty

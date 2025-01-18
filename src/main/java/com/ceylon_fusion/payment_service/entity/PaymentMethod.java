@@ -53,12 +53,12 @@ public class PaymentMethod {
 
     @Enumerated(EnumType.STRING)
     @NotNull(message="Provider is required")
-    @Column(name="provider" ,nullable=false)
+    @Column(name="provider", nullable=false, columnDefinition = "VARCHAR(50)")
     private Provider provider;
 
     @Enumerated(EnumType.STRING)
     @NotNull(message="Status is required")
-    @Column(name="status", nullable=false)
+    @Column(name="status", nullable=false, columnDefinition = "VARCHAR(50)")
     private PaymentMethodsStatus status;
 
     @CreationTimestamp

@@ -47,7 +47,7 @@ public class Payment {
 
     @NotEmpty
     @Enumerated(EnumType.STRING)
-    @Column(name="payment_status")
+    @Column(name="payment_status", columnDefinition = "VARCHAR(50)")
     private PaymentStatus paymentStatus;
 
     @NotNull
@@ -62,6 +62,8 @@ public class Payment {
     private LocalDateTime updatedAt;
 
     @NotNull
+    @Column(name="currency", columnDefinition = "VARCHAR(50)")
+    @Enumerated(EnumType.STRING)
     private Currency currency;
 
 
