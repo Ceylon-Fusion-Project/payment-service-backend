@@ -164,8 +164,6 @@ public class PaymentController {
         }
     }
 
-
-
     @GetMapping("/date-range")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payments within date range with filtering and pagination")
@@ -242,7 +240,5 @@ public class PaymentController {
                     .body(new StandardResponse(404, e.getMessage(), null));
         }
     }
-
-
 
 }

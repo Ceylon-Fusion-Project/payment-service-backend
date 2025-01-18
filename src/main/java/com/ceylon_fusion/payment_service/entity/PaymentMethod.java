@@ -72,5 +72,4 @@ public class PaymentMethod {
     @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL)
     private Set<Payment> payments = new HashSet<>();
 
-
 }

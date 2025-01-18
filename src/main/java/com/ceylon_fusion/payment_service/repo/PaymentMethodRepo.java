@@ -13,4 +13,6 @@ import java.util.Optional;
 @EnableJpaRepositories
 public interface PaymentMethodRepo extends JpaRepository<PaymentMethod, Long> {
 
+    Optional<PaymentMethod> findByUserIdAndIsDefaultTrue(Long userId);
+
 }
