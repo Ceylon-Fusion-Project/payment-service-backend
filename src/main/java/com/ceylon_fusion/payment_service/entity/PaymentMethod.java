@@ -46,10 +46,20 @@ public class PaymentMethod {
     @Column(name = "is_default", nullable = false)
     private Boolean isDefault;
 
+    // Essential Stripe fields
+    @Column(name="stripe_payment_method_id", unique = true)
+    private String stripePaymentMethodId;  // Required for processing payments
+
     @NotEmpty(message = "Masked details can't be empty")
     @Pattern(regexp = "\\*{4} \\*{4} \\*{4} \\d{4}",message = "Masked details must follow the format **** **** **** 1234")
     @Column(name = "masked_details", nullable = false)
     private String maskedDetails;
+
+    @Column(name="card_exp_month")
+    private Integer cardExpirationMonth;  // Required for card validity
+
+    @Column(name="card_exp_year")
+    private Integer cardExpirationYear;  // Required for card validity
 
     @Enumerated(EnumType.STRING)
     @NotNull(message="Provider is required")

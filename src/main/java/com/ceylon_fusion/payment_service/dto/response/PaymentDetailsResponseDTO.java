@@ -19,4 +19,7 @@ public class PaymentDetailsResponseDTO {
     private LocalDateTime paymentDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    private String stripePaymentIntentId;
+    private String stripeClientSecret;
 }

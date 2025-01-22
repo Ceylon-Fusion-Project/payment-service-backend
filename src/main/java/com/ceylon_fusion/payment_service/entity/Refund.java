@@ -48,6 +48,12 @@ public class Refund {
     @Column(name="transactiona_date")
     private LocalDateTime transactionDate;
 
+    // Essential Stripe fields
+    @Column(name="stripe_refund_id", unique = true)
+    private String stripeRefundId;  // Required for tracking refund in Stripe
+
+    @Column(name="refund_error")
+    private String refundError;  // Important for error handling
 
     @CreationTimestamp
     @Column(name="created_at", nullable = false, updatable = false)

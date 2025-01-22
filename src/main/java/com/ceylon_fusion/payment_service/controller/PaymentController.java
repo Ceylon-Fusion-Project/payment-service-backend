@@ -240,5 +240,31 @@ public class PaymentController {
                     .body(new StandardResponse(404, e.getMessage(), null));
         }
     }
-
+    // Update PaymentController with new endpoint
+    @PutMapping("/cancel-order/order/{orderId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Cancel an order payment using order ID")
+    public ResponseEntity<StandardResponse> cancelOrderPaymentByOrderId(
+            @PathVariable Long orderId) {
+        try {
+            PaymentDetailsResponseDTO response = paymentService.cancelOrderPaymentByOrderId(orderId);
+            return new ResponseEntity<>(
+                    new StandardResponse(
+                            200,
+                            "Order payment cancelled successfully",
+                            response
+                    ),
+                    HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    new StandardResponse(
+                            400,
+                            e.getMessage(),
+                            null
+                    ),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+    }
 }

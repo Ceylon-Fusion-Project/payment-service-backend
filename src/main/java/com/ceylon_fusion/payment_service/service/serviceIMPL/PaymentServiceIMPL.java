@@ -7,6 +7,7 @@ import com.ceylon_fusion.payment_service.dto.request.CreatePaymentRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.PaymentFilterRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.UpdatePaymentRequestDTO;
 import com.ceylon_fusion.payment_service.dto.response.PaymentDetailsResponseDTO;
+import com.ceylon_fusion.payment_service.dto.stripe.StripeWebhookDTO;
 import com.ceylon_fusion.payment_service.entity.Payment;
 import com.ceylon_fusion.payment_service.entity.PaymentMethod;
 import com.ceylon_fusion.payment_service.entity.enums.Currency;
@@ -21,8 +22,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -46,7 +51,7 @@ public class PaymentServiceIMPL implements PaymentService {
 
     @Override
     public PaymentDetailsResponseDTO saveOrderPayment(CreatePaymentRequestDTO createPaymentRequestDTO) {
-       //Validate the order
+        //Validate the order
         if (createPaymentRequestDTO == null) {
             throw new IllegalArgumentException("Payment request cannot be null");
         }
@@ -73,7 +78,6 @@ public class PaymentServiceIMPL implements PaymentService {
         Payment savedPayment = paymentRepo.save(payment);
         return paymentMapper.paymentToPaymentDetailsResponseDTO(savedPayment);
     }
-
 
 
     @Override
@@ -275,5 +279,40 @@ public class PaymentServiceIMPL implements PaymentService {
         }
 
         paymentRepo.delete(payment);
+    }
+
+    @Override
+    public void handleStripeWebhook(StripeWebhookDTO webhookDTO) {
+
+    }
+
+    @Override
+    public PaymentDetailsResponseDTO cancelOrderPaymentByOrderId(Long orderId) {
+        // Find payment by order ID
+        Payment payment = paymentRepo.findByOrderId(orderId)
+                .orElseThrow(() -> new RuntimeException("No payment found for order ID: " + orderId));
+
+        // Validate if payment can be cancelled
+        if (payment.getPaymentStatus() == PaymentStatus.SUCCEEDED) {
+            throw new RuntimeException("Cannot cancel a successful payment. Please initiate a refund instead.");
+        }
+
+        // Get current authentication
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        // If the user is not an admin, check if they own the order
+        if (!authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            if (!payment.getUserId().toString().equals(currentUsername)) {
+                throw new RuntimeException("You are not authorized to cancel this order payment");
+            }
+        }
+
+        // Update payment status
+        payment.setPaymentStatus(PaymentStatus.CANCELLED);
+        Payment updatedPayment = paymentRepo.save(payment);
+
+        return paymentMapper.paymentToPaymentDetailsResponseDTO(updatedPayment);
     }
 }

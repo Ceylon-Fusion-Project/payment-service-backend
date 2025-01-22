@@ -34,6 +34,9 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
 
+                        //Stripe webhook endpoint
+                        .requestMatchers("/api/v1/stripe/webhook").permitAll()
+
                         // Payment endpoints
                         .requestMatchers(HttpMethod.POST, "/api/payments/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.GET, "/api/payments/**").hasAnyRole("ADMIN", "USER")

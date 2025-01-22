@@ -53,6 +53,14 @@ public class Payment {
     @NotNull
     private LocalDateTime paymentDate;
 
+    // Essential Stripe fields
+    @Column(name="stripe_payment_intent_id")
+    private String stripePaymentIntentId;  // Required for tracking payment in Stripe
+
+    @Column(name="payment_error")
+    private String paymentError;  // Important for error handling
+
+    //Timestamps
     @CreationTimestamp
     @Column(name="created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -66,23 +74,12 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-
+    //Relationships
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id", nullable = false)
     private PaymentMethod paymentMethod;
 
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Refund> refunds = new HashSet<>();
-
-    // Helper method to manage bidirectional relationship
-    public void addRefund(Refund refund) {
-        refunds.add(refund);
-        refund.setPayment(this);
-    }
-
-    public void removeRefund(Refund refund) {
-        refunds.remove(refund);
-        refund.setPayment(null);
-    }
 
 }

@@ -6,6 +6,7 @@ import com.ceylon_fusion.payment_service.dto.request.CreatePaymentRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.PaymentFilterRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.UpdatePaymentRequestDTO;
 import com.ceylon_fusion.payment_service.dto.response.PaymentDetailsResponseDTO;
+import com.ceylon_fusion.payment_service.dto.stripe.StripeWebhookDTO;
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
@@ -28,4 +29,8 @@ public interface PaymentService {
     Object updatePayment(Long paymentId, @Valid UpdatePaymentRequestDTO updatePaymentRequestDTO);
 
     void deletePayment(Long paymentId);
+
+    void handleStripeWebhook(StripeWebhookDTO webhookDTO);
+
+    PaymentDetailsResponseDTO cancelOrderPaymentByOrderId(Long orderId);
 }
