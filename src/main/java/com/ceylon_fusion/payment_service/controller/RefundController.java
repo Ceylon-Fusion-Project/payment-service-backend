@@ -23,7 +23,7 @@ public class RefundController {
 
     private final RefundService refundService;
 
-    @PostMapping
+    @PostMapping("/initiate")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Initiate a refund (Admin only)")
     public ResponseEntity<StandardResponse> initiateRefund(
@@ -41,7 +41,7 @@ public class RefundController {
             );
         }
     }
-    @GetMapping("/{refundId}")
+    @GetMapping("/details/{refundId} ")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get refund by ID")
     public ResponseEntity<StandardResponse> getRefundById(@PathVariable Long refundId) {
@@ -59,7 +59,7 @@ public class RefundController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/list ")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get all refunds with pagination")
     public ResponseEntity<StandardResponse> getAllRefunds(
@@ -80,7 +80,7 @@ public class RefundController {
             );
         }
     }
-    @GetMapping("/date-range")
+    @GetMapping("/filter")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get refunds by date range")
     public ResponseEntity<StandardResponse> getRefundsByDateRange(
@@ -102,7 +102,7 @@ public class RefundController {
             );
         }
     }
-    @PutMapping("/{refundId}/status")
+    @PutMapping("/status/{refundId} ")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update refund status (Admin only)")
     public ResponseEntity<StandardResponse> updateRefundStatus(
@@ -121,7 +121,7 @@ public class RefundController {
             );
         }
     }
-    @DeleteMapping("/{refundId}")
+    @DeleteMapping("cancel/{refundId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Cancel refund (Admin only)")
     public ResponseEntity<StandardResponse> cancelRefund(@PathVariable Long refundId) {

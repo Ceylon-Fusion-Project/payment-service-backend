@@ -24,7 +24,7 @@ public class PaymentMethodController {
 
     private final PaymentMethodService paymentMethodService;
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a new payment method")
     public ResponseEntity<StandardResponse> createPaymentMethod(
@@ -43,7 +43,7 @@ public class PaymentMethodController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/details/{id} ")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payment method by ID")
     public ResponseEntity<StandardResponse> getPaymentMethodById(@PathVariable Long id) {
@@ -82,7 +82,7 @@ public class PaymentMethodController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update payment method (Admin only)")
     public ResponseEntity<StandardResponse> updatePaymentMethod(
@@ -103,7 +103,7 @@ public class PaymentMethodController {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/remove/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete payment method (Admin only)")
     public ResponseEntity<StandardResponse> deletePaymentMethod(@PathVariable Long id) {

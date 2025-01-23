@@ -35,7 +35,7 @@ public class PaymentController {
     private  PaymentService paymentService;
 
 
-    @PostMapping(path = "/order")
+    @PostMapping(path = "/process-order")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a new Order payment")
     public ResponseEntity<StandardResponse> saveOrderPayment(
@@ -55,7 +55,7 @@ public class PaymentController {
         }
     }
 
-    @PostMapping(path = "/booking")
+    @PostMapping(path = "/process-booking")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a new Booking payment")
     public ResponseEntity<StandardResponse> saveBookingPayment(
@@ -75,7 +75,7 @@ public class PaymentController {
         }
     }
 
-    @GetMapping(path = "/get-payment-by-id")
+    @GetMapping(path = "/details/{paymentId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payment by ID")
     public ResponseEntity<StandardResponse> getPaymentById(
@@ -95,7 +95,7 @@ public class PaymentController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/list")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get all payments with filtering and pagination")
     public ResponseEntity<StandardResponse> getAllPayments(
@@ -129,7 +129,7 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/analytics")
+    @GetMapping("/analytics/metrics ")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get payment analytics within date range")
     public ResponseEntity<StandardResponse> getPaymentAnalytics(
@@ -164,7 +164,7 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/date-range")
+    @GetMapping("/filter")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payments within date range with filtering and pagination")
     public ResponseEntity<StandardResponse> getPaymentsByDateRange(
@@ -207,7 +207,7 @@ public class PaymentController {
         }
     }
 
-    @PutMapping("/{paymentId}")
+    @PutMapping("/update/{paymentId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update payment")
     public ResponseEntity<StandardResponse> updatePayment(
@@ -241,7 +241,7 @@ public class PaymentController {
         }
     }
     // Update PaymentController with new endpoint
-    @PutMapping("/cancel-order/order/{orderId}")
+    @PutMapping("/remove/{paymentId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Cancel an order payment using order ID")
     public ResponseEntity<StandardResponse> cancelOrderPaymentByOrderId(
