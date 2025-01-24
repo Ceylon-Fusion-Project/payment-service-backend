@@ -1,6 +1,7 @@
 package com.ceylon_fusion.payment_service.controller;
 
 import com.ceylon_fusion.payment_service.dto.request.InitiateRefundRequestDTO;
+import com.ceylon_fusion.payment_service.dto.response.StandardResponseDTO;
 import com.ceylon_fusion.payment_service.service.RefundService;
 import com.ceylon_fusion.payment_service.util.StandardResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,33 +30,24 @@ public class RefundController {
     public ResponseEntity<StandardResponse> initiateRefund(
             @RequestBody InitiateRefundRequestDTO request) {
         try {
-            var response = refundService.initiateRefund(request);
-            return new ResponseEntity<>(
-                    new StandardResponse(201, "Refund initiated successfully", response),
-                    HttpStatus.CREATED
-            );
+            Object response = refundService.initiateRefund(request);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new StandardResponse(201, "Refund initiated successfully", response));
         } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new StandardResponse(400, e.getMessage(), null),
-                    HttpStatus.BAD_REQUEST
-            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new StandardResponse(400, e.getMessage(), null));
         }
     }
-    @GetMapping("/details/{refundId} ")
+    @GetMapping("/details/{refundId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get refund by ID")
     public ResponseEntity<StandardResponse> getRefundById(@PathVariable Long refundId) {
         try {
-            var response = refundService.getRefundById(refundId);
-            return new ResponseEntity<>(
-                    new StandardResponse(200, "Refund retrieved successfully", response),
-                    HttpStatus.OK
-            );
+            Object response = refundService.getRefundById(refundId);
+            return ResponseEntity.ok(new StandardResponse(200, "Refund retrieved successfully", response));
         } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new StandardResponse(404, e.getMessage(), null),
-                    HttpStatus.NOT_FOUND
-            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new StandardResponse(404, e.getMessage(), null));
         }
     }
 

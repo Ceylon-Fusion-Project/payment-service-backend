@@ -5,6 +5,7 @@ import com.ceylon_fusion.payment_service.dto.PaymentMethodDTO;
 import com.ceylon_fusion.payment_service.dto.paginated.PaginatedPaymentMethodDTO;
 import com.ceylon_fusion.payment_service.dto.request.CreatePaymentMethodRequestDTO;
 import com.ceylon_fusion.payment_service.dto.response.PaymentMethodDetailsResponseDTO;
+import com.ceylon_fusion.payment_service.dto.response.StandardResponseDTO;
 import com.ceylon_fusion.payment_service.service.PaymentMethodService;
 import com.ceylon_fusion.payment_service.util.StandardResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,33 +32,24 @@ public class PaymentMethodController {
             @RequestBody CreatePaymentMethodRequestDTO request) {
         try {
             PaymentMethodDetailsResponseDTO response = paymentMethodService.createPaymentMethod(request);
-            return new ResponseEntity<>(
-                    new StandardResponse(201, "Payment method created successfully", response),
-                    HttpStatus.CREATED
-            );
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new StandardResponse(201, "Payment method created successfully", response));
         } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new StandardResponse(400, e.getMessage(), null),
-                    HttpStatus.BAD_REQUEST
-            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new StandardResponse(400, e.getMessage(), null));
         }
     }
 
-    @GetMapping("/details/{id} ")
+    @GetMapping("/details/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payment method by ID")
     public ResponseEntity<StandardResponse> getPaymentMethodById(@PathVariable Long id) {
         try {
             PaymentMethodDetailsResponseDTO response = paymentMethodService.getPaymentMethodById(id);
-            return new ResponseEntity<>(
-                    new StandardResponse(200, "Payment method retrieved successfully", response),
-                    HttpStatus.OK
-            );
+            return ResponseEntity.ok(new StandardResponse(200, "Payment method retrieved successfully", response));
         } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new StandardResponse(404, e.getMessage(), null),
-                    HttpStatus.NOT_FOUND
-            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new StandardResponse(404, e.getMessage(), null));
         }
     }
 
@@ -69,16 +61,11 @@ public class PaymentMethodController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         try {
-            var response = paymentMethodService.getUserPaymentMethods(userId, page, size);
-            return new ResponseEntity<>(
-                    new StandardResponse(200, "Payment methods retrieved successfully", response),
-                    HttpStatus.OK
-            );
+            Object response = paymentMethodService.getUserPaymentMethods(userId, page, size);
+            return ResponseEntity.ok(new StandardResponse(200, "Payment methods retrieved successfully", response));
         } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new StandardResponse(400, e.getMessage(), null),
-                    HttpStatus.BAD_REQUEST
-            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new StandardResponse(400, e.getMessage(), null));
         }
     }
 

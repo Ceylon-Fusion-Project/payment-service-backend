@@ -4,6 +4,7 @@ import com.ceylon_fusion.payment_service.dto.PaymentDTO;
 import com.ceylon_fusion.payment_service.dto.request.CreatePaymentRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.PaymentFilterRequestDTO;
 import com.ceylon_fusion.payment_service.dto.response.PaymentDetailsResponseDTO;
+import com.ceylon_fusion.payment_service.dto.response.StandardResponseDTO;
 import com.ceylon_fusion.payment_service.entity.Payment;
 import org.mapstruct.*;
 
@@ -16,6 +17,7 @@ public interface PaymentMapper {
     PaymentDTO paymentToPaymentDTO(Payment payment);
 
     List<PaymentDTO> paymentsToPaymentDTOs(List<Payment> payments);
+
     // Entity to Response DTO
     @org.mapstruct.Mapping(source = "paymentId", target = "paymentId")
     @org.mapstruct.Mapping(source = "userId", target = "userId")
@@ -26,6 +28,7 @@ public interface PaymentMapper {
     @org.mapstruct.Mapping(source = "createdAt", target = "createdAt")
     @org.mapstruct.Mapping(source = "updatedAt", target = "updatedAt")
     PaymentDetailsResponseDTO paymentToPaymentDetailsResponseDTO(Payment payment);
+
     PaymentFilterRequestDTO paymentToPaymentFilterRequestDTO(Payment payment);
 
 
@@ -35,8 +38,8 @@ public interface PaymentMapper {
     @org.mapstruct.Mapping(source = "bookingId", target = "bookingId")
     @org.mapstruct.Mapping(source = "amount", target = "amount")
     Payment createPaymentRequestDTOToPayment(CreatePaymentRequestDTO createPaymentRequestDTO);
+
     Payment paymentFilterRequestDTOToPayment(PaymentFilterRequestDTO dto);
 
     PaymentDTO map(Payment savedPayment, Class<PaymentDTO> paymentDTOClass);
-
 }

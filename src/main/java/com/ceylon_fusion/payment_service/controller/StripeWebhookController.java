@@ -21,6 +21,4 @@ public class StripeWebhookController {
     private final PaymentService paymentService;
     private final StripeService stripeService;
 
-
-
 }
