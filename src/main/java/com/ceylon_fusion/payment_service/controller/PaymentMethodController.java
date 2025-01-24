@@ -28,15 +28,35 @@ public class PaymentMethodController {
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a new payment method")
-    public ResponseEntity<StandardResponse> createPaymentMethod(
+    public ResponseEntity<StandardResponseDTO> createPaymentMethod(
             @RequestBody CreatePaymentMethodRequestDTO request) {
         try {
             PaymentMethodDetailsResponseDTO response = paymentMethodService.createPaymentMethod(request);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new StandardResponse(201, "Payment method created successfully", response));
+
+            StandardResponseDTO standardResponse = new StandardResponseDTO(
+                    true,
+                    response.getPaymentMethodId(),
+                    null,
+
+                    null
+            );
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(standardResponse);
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new StandardResponse(400, e.getMessage(), null));
+            // Create error response
+            StandardResponseDTO errorResponse = new StandardResponseDTO(
+                    false,
+                    null,
+                    null,
+                    null
+            );
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(errorResponse);
         }
     }
 

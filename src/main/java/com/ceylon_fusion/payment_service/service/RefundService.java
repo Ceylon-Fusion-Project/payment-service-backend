@@ -1,11 +1,12 @@
 package com.ceylon_fusion.payment_service.service;
 
 import com.ceylon_fusion.payment_service.dto.request.InitiateRefundRequestDTO;
+import com.ceylon_fusion.payment_service.dto.response.RefundDetailsResponseDTO;
 
 import java.time.LocalDateTime;
 
 public interface RefundService {
-    Object initiateRefund(InitiateRefundRequestDTO request);
+    RefundDetailsResponseDTO initiateRefund(InitiateRefundRequestDTO request);
 
     Object getRefundById(Long refundId);
 

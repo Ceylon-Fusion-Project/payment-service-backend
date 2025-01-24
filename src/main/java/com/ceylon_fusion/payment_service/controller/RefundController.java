@@ -1,6 +1,7 @@
 package com.ceylon_fusion.payment_service.controller;
 
 import com.ceylon_fusion.payment_service.dto.request.InitiateRefundRequestDTO;
+import com.ceylon_fusion.payment_service.dto.response.RefundDetailsResponseDTO;
 import com.ceylon_fusion.payment_service.dto.response.StandardResponseDTO;
 import com.ceylon_fusion.payment_service.service.RefundService;
 import com.ceylon_fusion.payment_service.util.StandardResponse;
@@ -27,15 +28,39 @@ public class RefundController {
     @PostMapping("/initiate")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Initiate a refund (Admin only)")
-    public ResponseEntity<StandardResponse> initiateRefund(
-            @RequestBody InitiateRefundRequestDTO request) {
+    public ResponseEntity<StandardResponseDTO> initiateRefund(@RequestBody InitiateRefundRequestDTO request) {
         try {
-            Object response = refundService.initiateRefund(request);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new StandardResponse(201, "Refund initiated successfully", response));
+            // First, explicitly cast the service response to RefundDetailsResponseDTO
+            RefundDetailsResponseDTO response = refundService.initiateRefund(request);
+
+            // Extract the payment details from the response
+            Long paymentId = response.getPaymentId();  // Get the associated payment ID
+            Long refundId = response.getRefundId();    // Get the refund ID
+
+            // Create a success response with complete details
+            StandardResponseDTO standardResponse = new StandardResponseDTO(
+                    true,                // Success indicator
+                    paymentId,          // Original payment ID
+                    null,               // Order ID (null for refunds)
+                    null           // Booking ID (null for refunds)
+            );
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(standardResponse);
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new StandardResponse(400, e.getMessage(), null));
+            // Create a detailed error response
+            StandardResponseDTO errorResponse = new StandardResponseDTO(
+                    false,              // Failure indicator
+                    null,              // No payment ID since operation failed
+                    null,              // No order ID
+                    null             // No booking ID
+            );
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(errorResponse);
         }
     }
     @GetMapping("/details/{refundId}")

@@ -31,7 +31,7 @@ public class RefundServiceIMPL implements RefundService {
     private final RefundMapper refundMapper;
 
     @Override
-    public Object initiateRefund(InitiateRefundRequestDTO request) {
+    public RefundDetailsResponseDTO initiateRefund(InitiateRefundRequestDTO request) {
         Long paymentId;
         try {
             paymentId = Long.valueOf(request.getPaymentId());

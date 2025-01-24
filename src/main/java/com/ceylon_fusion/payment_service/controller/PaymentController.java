@@ -39,43 +39,71 @@ public class PaymentController {
     @PostMapping(path = "/process-order")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a new Order payment")
-    public ResponseEntity<StandardResponse> saveOrderPayment(
+    public ResponseEntity<StandardResponseDTO> saveOrderPayment(
             @RequestBody CreatePaymentRequestDTO createPaymentRequestDTO) {
         try {
+            // Process the payment
             PaymentDetailsResponseDTO response = paymentService.saveOrderPayment(createPaymentRequestDTO);
 
-            return new ResponseEntity<>(
-                    new StandardResponse(201, "Order Payment Saved Successfully", response.getPaymentId()),
-                    HttpStatus.CREATED
+            // Create success response
+            StandardResponseDTO standardResponse = new StandardResponseDTO(
+                    true,  // success flag
+                    response.getPaymentId(),  // payment ID
+                    createPaymentRequestDTO.getOrderId(),  // order ID
+                    null  // booking ID (null for order payments)
             );
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(standardResponse);
+
         } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new StandardResponse(409, e.getMessage(), null),
-                    HttpStatus.CONFLICT
+            // Create error response
+            StandardResponseDTO errorResponse = new StandardResponseDTO(
+                    false,  // success flag
+                    null,   // payment ID
+                    createPaymentRequestDTO.getOrderId(),  // order ID
+                    null    // booking ID
             );
+
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(errorResponse);
         }
     }
 
     @PostMapping(path = "/process-booking")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a new Booking payment")
-    public ResponseEntity<StandardResponse> saveBookingPayment(
+    public ResponseEntity<StandardResponseDTO> saveBookingPayment(
             @RequestBody CreatePaymentRequestDTO createPaymentRequestDTO) {
         try {
             PaymentDetailsResponseDTO response = paymentService.saveBookingPayment(createPaymentRequestDTO);
 
-            return new ResponseEntity<>(
-                    new StandardResponse(201, "Booking Payment Saved Successfully", response.getPaymentId()),
-                    HttpStatus.CREATED
+            StandardResponseDTO standardResponse = new StandardResponseDTO(
+                    true,  // success flag
+                    response.getPaymentId(),  // payment ID
+                    null,  // order ID (null for booking payments)
+                    createPaymentRequestDTO.getBookingId()  // booking ID
             );
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(standardResponse);
+
         } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new StandardResponse(409, e.getMessage(), null),
-                    HttpStatus.CONFLICT
+            StandardResponseDTO errorResponse = new StandardResponseDTO(
+                    false,  // success flag
+                    null,   // payment ID
+                    null,   // order ID
+                    createPaymentRequestDTO.getBookingId()  // booking ID
             );
+
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(errorResponse);
         }
     }
-
     @GetMapping(path = "/details/{paymentId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payment by ID")
