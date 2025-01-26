@@ -7,7 +7,6 @@ import com.ceylon_fusion.payment_service.dto.request.CreatePaymentRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.PaymentFilterRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.UpdatePaymentRequestDTO;
 import com.ceylon_fusion.payment_service.dto.response.PaymentDetailsResponseDTO;
-import com.ceylon_fusion.payment_service.dto.stripe.StripeWebhookDTO;
 import com.ceylon_fusion.payment_service.entity.Payment;
 import com.ceylon_fusion.payment_service.entity.PaymentMethod;
 import com.ceylon_fusion.payment_service.entity.enums.Currency;
@@ -15,6 +14,7 @@ import com.ceylon_fusion.payment_service.entity.enums.PaymentStatus;
 import com.ceylon_fusion.payment_service.repo.PaymentMethodRepo;
 import com.ceylon_fusion.payment_service.repo.PaymentRepo;
 import com.ceylon_fusion.payment_service.service.PaymentService;
+import com.ceylon_fusion.payment_service.service.StripeService;
 import com.ceylon_fusion.payment_service.util.mappers.PaymentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +46,7 @@ public class PaymentServiceIMPL implements PaymentService {
 
     private final PaymentRepo paymentRepo;
     private final PaymentMethodRepo paymentMethodRepo;
+    private final StripeService stripeService;
     private final PaymentMapper paymentMapper;
 
 
@@ -279,11 +280,6 @@ public class PaymentServiceIMPL implements PaymentService {
         }
 
         paymentRepo.delete(payment);
-    }
-
-    @Override
-    public void handleStripeWebhook(StripeWebhookDTO webhookDTO) {
-
     }
 
     @Override

@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StripeWebhookDTO {
-    private String eventType;
-    private String stripePaymentIntentId;
+public class PaymentIntentResponse {
+    private String clientSecret;
+    private String paymentIntentId;
     private String status;
-    private Double amount;
 }

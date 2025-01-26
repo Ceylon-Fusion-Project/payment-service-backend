@@ -7,8 +7,18 @@ import com.ceylon_fusion.payment_service.dto.request.PaymentFilterRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.UpdatePaymentRequestDTO;
 import com.ceylon_fusion.payment_service.dto.response.PaymentDetailsResponseDTO;
 import com.ceylon_fusion.payment_service.dto.response.StandardResponseDTO;
+import com.ceylon_fusion.payment_service.dto.stripe.CreatePaymentIntentRequest;
+import com.ceylon_fusion.payment_service.dto.stripe.PaymentIntentResponse;
+import com.ceylon_fusion.payment_service.entity.Payment;
+import com.ceylon_fusion.payment_service.entity.PaymentMethod;
+import com.ceylon_fusion.payment_service.entity.enums.PaymentStatus;
+import com.ceylon_fusion.payment_service.repo.PaymentMethodRepo;
+import com.ceylon_fusion.payment_service.repo.PaymentRepo;
 import com.ceylon_fusion.payment_service.service.PaymentService;
+import com.ceylon_fusion.payment_service.service.StripeService;
 import com.ceylon_fusion.payment_service.util.StandardResponse;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -22,6 +32,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 
 @RestController
@@ -32,8 +43,10 @@ import java.time.LocalDateTime;
 @SecurityRequirement(name = "bearerAuth")
 public class PaymentController {
 
-    @Autowired
-    private  PaymentService paymentService;
+    private final PaymentMethodRepo paymentMethodRepo;
+    private  final PaymentService paymentService;
+    private final StripeService stripeService;
+    private final PaymentRepo paymentRepo;
 
 
     @PostMapping(path = "/process-order")
@@ -270,7 +283,7 @@ public class PaymentController {
         }
     }
     // Update PaymentController with new endpoint
-    @PutMapping("/remove/{paymentId}")
+    @PutMapping("/remove/{orderId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Cancel an order payment using order ID")
     public ResponseEntity<StandardResponse> cancelOrderPaymentByOrderId(
@@ -294,6 +307,80 @@ public class PaymentController {
                     ),
                     HttpStatus.BAD_REQUEST
             );
+        }
+    }
+    @PostMapping("/create-payment-intent")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Create a Stripe payment intent")
+    public ResponseEntity<StandardResponse> createPaymentIntent(
+            @RequestBody CreatePaymentIntentRequest request) {
+        try {
+            PaymentIntent intent = stripeService.createPaymentIntent(
+                    request.getAmount().doubleValue(),
+                    request.getCurrency(),
+                    request.getPaymentMethodId()
+            );
+
+            PaymentIntentResponse response = new PaymentIntentResponse(
+                    intent.getClientSecret(),
+                    intent.getId(),
+                    intent.getStatus()
+            );
+
+            return ResponseEntity.ok(new StandardResponse(
+                    200,
+                    "Payment intent created successfully",
+                    response
+            ));
+        } catch (Exception e) {
+            log.error("Error creating payment intent: ", e);
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new StandardResponse(400, e.getMessage(), null));
+        }
+    }
+    @PostMapping("/confirm-payment/{paymentIntentId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Confirm a Stripe payment")
+    public ResponseEntity<StandardResponse> confirmPayment(
+            @PathVariable String paymentIntentId) {
+        try {
+            PaymentIntent confirmedIntent = stripeService.confirmPayment(paymentIntentId);
+            return ResponseEntity.ok(new StandardResponse(
+                    200,
+                    "Payment confirmed successfully",
+                    confirmedIntent.getStatus()
+            ));
+        } catch (Exception e) {
+            log.error("Error confirming payment: ", e);
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new StandardResponse(400, e.getMessage(), null));
+        }
+    }
+    @GetMapping("/payment-intent/{paymentIntentId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<StandardResponse> getPaymentIntent(@PathVariable String paymentIntentId) {
+        try {
+            PaymentIntent intent = stripeService.retrievePaymentIntent(paymentIntentId);
+            return ResponseEntity.ok(new StandardResponse(200, "Payment intent retrieved",
+                    new PaymentIntentResponse(intent.getClientSecret(), intent.getId(), intent.getStatus())));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new StandardResponse(404, e.getMessage(), null));
+        }
+    }
+
+    @PostMapping("/webhook")
+    public ResponseEntity<StandardResponse> handleStripeWebhook(
+            @RequestBody String payload,
+            @RequestHeader("Stripe-Signature") String signature) {
+        try {
+            stripeService.validateWebhookSignature(payload, signature);
+            return ResponseEntity.ok(new StandardResponse(200, "Webhook processed", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new StandardResponse(400, e.getMessage(), null));
         }
     }
 }

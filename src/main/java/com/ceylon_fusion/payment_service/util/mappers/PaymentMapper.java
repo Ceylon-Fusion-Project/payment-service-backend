@@ -13,33 +13,42 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface PaymentMapper {
 
-    // Entity to DTO
+    @Mapping(source = "paymentId", target = "paymentId")
+    @Mapping(source = "userId", target = "userId")
+    @Mapping(source = "amount", target = "amount")
+    @Mapping(source = "paymentStatus", target = "paymentStatus")
+    @Mapping(source = "createdAt", target = "createdAt")
     PaymentDTO paymentToPaymentDTO(Payment payment);
 
     List<PaymentDTO> paymentsToPaymentDTOs(List<Payment> payments);
 
-    // Entity to Response DTO
-    @org.mapstruct.Mapping(source = "paymentId", target = "paymentId")
-    @org.mapstruct.Mapping(source = "userId", target = "userId")
-    @org.mapstruct.Mapping(source = "orderId", target = "orderId")
-    @org.mapstruct.Mapping(source = "bookingId", target = "bookingId")
-    @org.mapstruct.Mapping(source = "paymentStatus", target = "paymentStatus")
-    @org.mapstruct.Mapping(source = "paymentDate", target = "paymentDate")
-    @org.mapstruct.Mapping(source = "createdAt", target = "createdAt")
-    @org.mapstruct.Mapping(source = "updatedAt", target = "updatedAt")
+    @Mapping(source = "paymentId", target = "paymentId")
+    @Mapping(source = "userId", target = "userId")
+    @Mapping(source = "orderId", target = "orderId")
+    @Mapping(source = "bookingId", target = "bookingId")
+    @Mapping(source = "paymentStatus", target = "paymentStatus")
+    @Mapping(source = "paymentDate", target = "paymentDate")
+    @Mapping(source = "stripePaymentIntentId", target = "stripePaymentIntentId")
+    @Mapping(source = "clientSecret", target = "stripeClientSecret")
+    @Mapping(source = "createdAt", target = "createdAt")
+    @Mapping(source = "updatedAt", target = "updatedAt")
     PaymentDetailsResponseDTO paymentToPaymentDetailsResponseDTO(Payment payment);
 
-    PaymentFilterRequestDTO paymentToPaymentFilterRequestDTO(Payment payment);
+    @Mapping(source = "userId", target = "userId")
+    @Mapping(source = "orderId", target = "orderId")
+    @Mapping(source = "bookingId", target = "bookingId")
+    @Mapping(source = "amount", target = "amount")
+    @Mapping(target = "paymentStatus", constant = "PENDING")
+    @Mapping(target = "paymentDate", expression = "java(java.time.LocalDateTime.now())")
+    Payment createPaymentRequestDTOToPayment(CreatePaymentRequestDTO dto);
 
-
-    // Request DTO to Entity
-    @org.mapstruct.Mapping(source = "userId", target = "userId")
-    @org.mapstruct.Mapping(source = "orderId", target = "orderId")
-    @org.mapstruct.Mapping(source = "bookingId", target = "bookingId")
-    @org.mapstruct.Mapping(source = "amount", target = "amount")
-    Payment createPaymentRequestDTOToPayment(CreatePaymentRequestDTO createPaymentRequestDTO);
-
-    Payment paymentFilterRequestDTOToPayment(PaymentFilterRequestDTO dto);
-
-    PaymentDTO map(Payment savedPayment, Class<PaymentDTO> paymentDTOClass);
+    // Remove incorrect Payment mapping for filter DTO
+    default PaymentFilterRequestDTO paymentToPaymentFilterRequestDTO(Payment payment) {
+        return PaymentFilterRequestDTO.builder()
+                .userId(payment.getUserId())
+                .orderId(payment.getOrderId())
+                .bookingId(payment.getBookingId())
+                .status(payment.getPaymentStatus())
+                .build();
+    }
 }

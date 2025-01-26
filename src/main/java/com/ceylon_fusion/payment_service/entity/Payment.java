@@ -58,7 +58,10 @@ public class Payment {
     private String stripePaymentIntentId;  // Required for tracking payment in Stripe
 
     @Column(name="payment_error")
-    private String paymentError;  // Important for error handling
+    private String paymentError;// Important for error handling
+
+    @NotNull
+    private String clientSecret;
 
     //Timestamps
     @CreationTimestamp
