@@ -10,16 +10,16 @@ import org.springframework.context.annotation.Configuration;
 public class StripeConfig {
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
-//
-//    @Value("${stripe.webhook.secret}")
-//    private String stripeWebhookSecret;
+
+    @Value("${stripe.webhook.secret}")
+    private String stripeWebhookSecret;
 
     @PostConstruct
     public void init(){
         Stripe.apiKey=stripeSecretKey;
     }
-//    @Bean
-//    public String stripeWebhookSecret() {
-//        return stripeWebhookSecret;
-//    }
+    @Bean
+    public String stripeWebhookSecret() {
+        return stripeWebhookSecret;
+    }
 }

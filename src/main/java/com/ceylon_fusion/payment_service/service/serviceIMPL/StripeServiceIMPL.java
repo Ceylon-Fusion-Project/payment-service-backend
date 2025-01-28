@@ -27,8 +27,8 @@ public class StripeServiceIMPL implements StripeService {
     @Value("${secret_key}")
     private String secretKey;
 
-//    @Value("${stripe.webhook.secret}")
-//    private String webhookSecret;
+    @Value("${stripe.webhook.secret}")
+    private String webhookSecret;
 
     @Override
     public PaymentIntent createPaymentIntent(Double amount, String currency, String paymentMethodId) {
