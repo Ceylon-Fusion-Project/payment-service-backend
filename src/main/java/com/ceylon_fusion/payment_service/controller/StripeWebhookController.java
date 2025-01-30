@@ -21,7 +21,7 @@ public class StripeWebhookController {
     private final PaymentService paymentService;
     private final StripeService stripeService;
 
-    @PostMapping("/webhook")
+    @PostMapping("/handle-stripe-webhook")
     public ResponseEntity<StandardResponse> handleStripeWebhook(
             @RequestBody String payload,
             @RequestHeader("Stripe-Signature") String sigHeader) {

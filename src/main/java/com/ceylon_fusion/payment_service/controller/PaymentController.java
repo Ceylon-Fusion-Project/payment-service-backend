@@ -2,9 +2,7 @@ package com.ceylon_fusion.payment_service.controller;
 
 
 import com.ceylon_fusion.payment_service.dto.analytics.PaymentAnalyticsDTO;
-import com.ceylon_fusion.payment_service.dto.request.CreatePaymentRequestDTO;
-import com.ceylon_fusion.payment_service.dto.request.PaymentFilterRequestDTO;
-import com.ceylon_fusion.payment_service.dto.request.UpdatePaymentRequestDTO;
+import com.ceylon_fusion.payment_service.dto.request.*;
 import com.ceylon_fusion.payment_service.dto.response.PaymentDetailsResponseDTO;
 import com.ceylon_fusion.payment_service.dto.response.StandardResponseDTO;
 import com.ceylon_fusion.payment_service.dto.stripe.CreatePaymentIntentRequest;
@@ -17,6 +15,7 @@ import com.ceylon_fusion.payment_service.repo.PaymentRepo;
 import com.ceylon_fusion.payment_service.service.PaymentService;
 import com.ceylon_fusion.payment_service.service.StripeService;
 import com.ceylon_fusion.payment_service.util.StandardResponse;
+import com.ceylon_fusion.payment_service.util.mappers.PaymentMapper;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,14 +46,18 @@ public class PaymentController {
     private  final PaymentService paymentService;
     private final StripeService stripeService;
     private final PaymentRepo paymentRepo;
+    private final PaymentMapper paymentMapper;
 
 
-    @PostMapping(path = "/process-order")
+    @PostMapping(path = "/payment-process-order")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a new Order payment")
     public ResponseEntity<StandardResponseDTO> saveOrderPayment(
-            @RequestBody CreatePaymentRequestDTO createPaymentRequestDTO) {
+            @RequestBody OrderRequestDTO orderRequestDTO) {
         try {
+            // Convert OrderRequestDTO to CreatePaymentRequestDTO
+            CreatePaymentRequestDTO createPaymentRequestDTO = paymentMapper.orderRequestDTOToCreatePaymentRequestDTO(orderRequestDTO);
+
             // Process the payment
             PaymentDetailsResponseDTO response = paymentService.saveOrderPayment(createPaymentRequestDTO);
 
@@ -62,7 +65,7 @@ public class PaymentController {
             StandardResponseDTO standardResponse = new StandardResponseDTO(
                     true,  // success flag
                     response.getPaymentId(),  // payment ID
-                    createPaymentRequestDTO.getOrderId(),  // order ID
+                    orderRequestDTO.getOrderId(),  // order ID
                     null  // booking ID (null for order payments)
             );
 
@@ -75,7 +78,7 @@ public class PaymentController {
             StandardResponseDTO errorResponse = new StandardResponseDTO(
                     false,  // success flag
                     null,   // payment ID
-                    createPaymentRequestDTO.getOrderId(),  // order ID
+                    orderRequestDTO.getOrderId(),  // order ID
                     null    // booking ID
             );
 
@@ -85,39 +88,8 @@ public class PaymentController {
         }
     }
 
-    @PostMapping(path = "/process-booking")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    @Operation(summary = "Create a new Booking payment")
-    public ResponseEntity<StandardResponseDTO> saveBookingPayment(
-            @RequestBody CreatePaymentRequestDTO createPaymentRequestDTO) {
-        try {
-            PaymentDetailsResponseDTO response = paymentService.saveBookingPayment(createPaymentRequestDTO);
 
-            StandardResponseDTO standardResponse = new StandardResponseDTO(
-                    true,  // success flag
-                    response.getPaymentId(),  // payment ID
-                    null,  // order ID (null for booking payments)
-                    createPaymentRequestDTO.getBookingId()  // booking ID
-            );
-
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(standardResponse);
-
-        } catch (Exception e) {
-            StandardResponseDTO errorResponse = new StandardResponseDTO(
-                    false,  // success flag
-                    null,   // payment ID
-                    null,   // order ID
-                    createPaymentRequestDTO.getBookingId()  // booking ID
-            );
-
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(errorResponse);
-        }
-    }
-    @GetMapping(path = "/details/{paymentId}")
+    @GetMapping(path = "/payment-details", params = "paymentId")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payment by ID")
     public ResponseEntity<StandardResponse> getPaymentById(
@@ -137,7 +109,7 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/list")
+    @GetMapping("/payment-filtering-and-pagination")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get all payments with filtering and pagination")
     public ResponseEntity<StandardResponse> getAllPayments(
@@ -171,7 +143,7 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/analytics/metrics ")
+    @GetMapping("/payment-analytics-and-metrics ")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get payment analytics within date range")
     public ResponseEntity<StandardResponse> getPaymentAnalytics(
@@ -206,7 +178,7 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/filter")
+    @GetMapping("/payment-filter-and-pagination")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payments within date range with filtering and pagination")
     public ResponseEntity<StandardResponse> getPaymentsByDateRange(
@@ -249,11 +221,11 @@ public class PaymentController {
         }
     }
 
-    @PutMapping("/update/{paymentId}")
+    @PutMapping(path="/update-payment", params = "paymentId")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update payment")
     public ResponseEntity<StandardResponse> updatePayment(
-            @PathVariable Long paymentId,
+            @RequestParam Long paymentId,
             @Valid @RequestBody UpdatePaymentRequestDTO updatePaymentRequestDTO) {
         try {
             return ResponseEntity.ok(new StandardResponse(
@@ -266,10 +238,10 @@ public class PaymentController {
                     .body(new StandardResponse(400, e.getMessage(), null));
         }
     }
-    @DeleteMapping("/{paymentId}")
+    @DeleteMapping(path = "/delete-payment", params = "paymentId")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete payment")
-    public ResponseEntity<StandardResponse> deletePayment(@PathVariable Long paymentId) {
+    public ResponseEntity<StandardResponse> deletePayment(@RequestParam Long paymentId) {
         try {
             paymentService.deletePayment(paymentId);
             return ResponseEntity.ok(new StandardResponse(
@@ -283,11 +255,11 @@ public class PaymentController {
         }
     }
     // Update PaymentController with new endpoint
-    @PutMapping("/remove/{orderId}")
+    @PutMapping(path = "/cancel-order-payment", params = "orderId")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Cancel an order payment using order ID")
     public ResponseEntity<StandardResponse> cancelOrderPaymentByOrderId(
-            @PathVariable Long orderId) {
+            @RequestParam Long orderId) {
         try {
             PaymentDetailsResponseDTO response = paymentService.cancelOrderPaymentByOrderId(orderId);
             return new ResponseEntity<>(
@@ -309,7 +281,7 @@ public class PaymentController {
             );
         }
     }
-    @PostMapping("/create-payment-intent")
+    @PostMapping("/create-stripe-payment-intent")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a Stripe payment intent")
     public ResponseEntity<StandardResponse> createPaymentIntent(
@@ -339,11 +311,11 @@ public class PaymentController {
                     .body(new StandardResponse(400, e.getMessage(), null));
         }
     }
-    @PostMapping("/confirm-payment/{paymentIntentId}")
+    @PostMapping(path = "/confirm-stripe-payment",params = "paymentIntentId")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Confirm a Stripe payment")
     public ResponseEntity<StandardResponse> confirmPayment(
-            @PathVariable String paymentIntentId) {
+            @RequestParam String paymentIntentId) {
         try {
             PaymentIntent confirmedIntent = stripeService.confirmPayment(paymentIntentId);
             return ResponseEntity.ok(new StandardResponse(
@@ -358,9 +330,9 @@ public class PaymentController {
                     .body(new StandardResponse(400, e.getMessage(), null));
         }
     }
-    @GetMapping("/payment-intent/{paymentIntentId}")
+    @GetMapping(path = "/get-payment-intent",params = "paymentIntentId")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<StandardResponse> getPaymentIntent(@PathVariable String paymentIntentId) {
+    public ResponseEntity<StandardResponse> getPaymentIntent(@RequestParam String paymentIntentId) {
         try {
             PaymentIntent intent = stripeService.retrievePaymentIntent(paymentIntentId);
             return ResponseEntity.ok(new StandardResponse(200, "Payment intent retrieved",
@@ -371,7 +343,7 @@ public class PaymentController {
         }
     }
 
-    @PostMapping("/webhook")
+    @PostMapping("/handle-stripe-webhook")
     public ResponseEntity<StandardResponse> handleStripeWebhook(
             @RequestBody String payload,
             @RequestHeader("Stripe-Signature") String signature) {

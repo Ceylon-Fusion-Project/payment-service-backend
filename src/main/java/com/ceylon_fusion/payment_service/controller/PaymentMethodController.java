@@ -25,7 +25,7 @@ public class PaymentMethodController {
 
     private final PaymentMethodService paymentMethodService;
 
-    @PostMapping("/create")
+    @PostMapping("/create-payment-method")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a new payment method")
     public ResponseEntity<StandardResponseDTO> createPaymentMethod(
@@ -60,10 +60,10 @@ public class PaymentMethodController {
         }
     }
 
-    @GetMapping("/details/{id}")
+    @GetMapping(path = "/get-payment-method-details",params = "id")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payment method by ID")
-    public ResponseEntity<StandardResponse> getPaymentMethodById(@PathVariable Long id) {
+    public ResponseEntity<StandardResponse> getPaymentMethodById(@RequestParam Long id) {
         try {
             PaymentMethodDetailsResponseDTO response = paymentMethodService.getPaymentMethodById(id);
             return ResponseEntity.ok(new StandardResponse(200, "Payment method retrieved successfully", response));
@@ -73,11 +73,11 @@ public class PaymentMethodController {
         }
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping(path = "/all-payment-methods-for-user",params = "userId")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get all payment methods for a user")
     public ResponseEntity<StandardResponse> getUserPaymentMethods(
-            @PathVariable Long userId,
+            @RequestParam Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         try {
@@ -89,11 +89,11 @@ public class PaymentMethodController {
         }
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping(path = "/update-payment-method",params = "id")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update payment method (Admin only)")
     public ResponseEntity<StandardResponse> updatePaymentMethod(
-            @PathVariable Long id,
+            @RequestParam Long id,
             @RequestBody CreatePaymentMethodRequestDTO request) {
         try {
             PaymentMethodDetailsResponseDTO response = paymentMethodService.updatePaymentMethod(id, request);
@@ -110,10 +110,10 @@ public class PaymentMethodController {
     }
 
 
-    @DeleteMapping("/remove/{id}")
+    @DeleteMapping(path = "/delete-payment-method",params ="id")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete payment method (Admin only)")
-    public ResponseEntity<StandardResponse> deletePaymentMethod(@PathVariable Long id) {
+    public ResponseEntity<StandardResponse> deletePaymentMethod(@RequestParam Long id) {
         try {
             paymentMethodService.deletePaymentMethod(id);
             return new ResponseEntity<>(

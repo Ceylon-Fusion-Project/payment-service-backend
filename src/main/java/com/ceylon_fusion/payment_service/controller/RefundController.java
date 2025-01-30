@@ -25,7 +25,7 @@ public class RefundController {
 
     private final RefundService refundService;
 
-    @PostMapping("/initiate")
+    @PostMapping("/initiate-refund")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Initiate a refund (Admin only)")
     public ResponseEntity<StandardResponseDTO> initiateRefund(@RequestBody InitiateRefundRequestDTO request) {
@@ -63,10 +63,10 @@ public class RefundController {
                     .body(errorResponse);
         }
     }
-    @GetMapping("/details/{refundId}")
+    @GetMapping(path = "/get-refund-by-id",params = "refundId")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get refund by ID")
-    public ResponseEntity<StandardResponse> getRefundById(@PathVariable Long refundId) {
+    public ResponseEntity<StandardResponse> getRefundById(@RequestParam Long refundId) {
         try {
             Object response = refundService.getRefundById(refundId);
             return ResponseEntity.ok(new StandardResponse(200, "Refund retrieved successfully", response));
@@ -76,7 +76,7 @@ public class RefundController {
         }
     }
 
-    @GetMapping("/list ")
+    @GetMapping("/refund-with-pagination ")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get all refunds with pagination")
     public ResponseEntity<StandardResponse> getAllRefunds(
@@ -97,7 +97,7 @@ public class RefundController {
             );
         }
     }
-    @GetMapping("/filter")
+    @GetMapping("/refund-by-date-range")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get refunds by date range")
     public ResponseEntity<StandardResponse> getRefundsByDateRange(
@@ -119,11 +119,11 @@ public class RefundController {
             );
         }
     }
-    @PutMapping("/status/{refundId} ")
+    @PutMapping(path ="/update-refund-status ",params = "refundId")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update refund status (Admin only)")
     public ResponseEntity<StandardResponse> updateRefundStatus(
-            @PathVariable Long refundId,
+            @RequestParam Long refundId,
             @RequestParam String status) {
         try {
             var response = refundService.updateRefundStatus(refundId, status);
@@ -138,10 +138,10 @@ public class RefundController {
             );
         }
     }
-    @DeleteMapping("cancel/{refundId}")
+    @DeleteMapping(path = "cancel-refund", params = "refundId")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Cancel refund (Admin only)")
-    public ResponseEntity<StandardResponse> cancelRefund(@PathVariable Long refundId) {
+    public ResponseEntity<StandardResponse> cancelRefund(@RequestParam Long refundId) {
         try {
             refundService.cancelRefund(refundId);
             return new ResponseEntity<>(

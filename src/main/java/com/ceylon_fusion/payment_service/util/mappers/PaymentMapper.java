@@ -1,7 +1,9 @@
 package com.ceylon_fusion.payment_service.util.mappers;
 
 import com.ceylon_fusion.payment_service.dto.PaymentDTO;
+import com.ceylon_fusion.payment_service.dto.request.BookingRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.CreatePaymentRequestDTO;
+import com.ceylon_fusion.payment_service.dto.request.OrderRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.PaymentFilterRequestDTO;
 import com.ceylon_fusion.payment_service.dto.response.PaymentDetailsResponseDTO;
 import com.ceylon_fusion.payment_service.dto.response.StandardResponseDTO;
@@ -41,6 +43,11 @@ public interface PaymentMapper {
     @Mapping(target = "paymentStatus", constant = "PENDING")
     @Mapping(target = "paymentDate", expression = "java(java.time.LocalDateTime.now())")
     Payment createPaymentRequestDTOToPayment(CreatePaymentRequestDTO dto);
+
+    @Mapping(source = "orderId", target = "orderId")
+    @Mapping(source = "userId", target = "userId")
+    @Mapping(source = "amount", target = "amount")
+    CreatePaymentRequestDTO orderRequestDTOToCreatePaymentRequestDTO(OrderRequestDTO orderRequestDTO);
 
     // Remove incorrect Payment mapping for filter DTO
     default PaymentFilterRequestDTO paymentToPaymentFilterRequestDTO(Payment payment) {
