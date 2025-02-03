@@ -343,16 +343,16 @@ public class PaymentController {
         }
     }
 
-    @PostMapping("/handle-stripe-webhook")
-    public ResponseEntity<StandardResponse> handleStripeWebhook(
-            @RequestBody String payload,
-            @RequestHeader("Stripe-Signature") String signature) {
-        try {
-            stripeService.validateWebhookSignature(payload, signature);
-            return ResponseEntity.ok(new StandardResponse(200, "Webhook processed", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new StandardResponse(400, e.getMessage(), null));
-        }
-    }
+//    @PostMapping("/handle-stripe-webhook")
+//    public ResponseEntity<StandardResponse> handleStripeWebhook(
+//            @RequestBody String payload,
+//            @RequestHeader("Stripe-Signature") String signature) {
+//        try {
+//            stripeService.validateWebhookSignature(payload, signature);
+//            return ResponseEntity.ok(new StandardResponse(200, "Webhook processed", null));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(new StandardResponse(400, e.getMessage(), null));
+//        }
+//    }
 }

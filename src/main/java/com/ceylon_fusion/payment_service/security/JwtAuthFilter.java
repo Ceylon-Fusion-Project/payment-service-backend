@@ -39,33 +39,43 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         .parseClaimsJws(token)
                         .getBody();
 
+                // Extract authorities from the token
                 @SuppressWarnings("unchecked")
                 List<String> authorities = (List<String>) claims.get("authorities");
 
+                // Create an authentication token
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        claims.getSubject(),
-                        null,
+                        claims.getSubject(), // Username
+                        null, // Credentials (not needed for JWT)
                         authorities.stream()
                                 .map(SimpleGrantedAuthority::new)
                                 .collect(Collectors.toList())
                 );
 
+                // Set the authentication in the SecurityContext
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {
+                // Clear the SecurityContext if token validation fails
                 SecurityContextHolder.clearContext();
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
+                return; // Stop further processing
             }
         }
 
+        // Continue the filter chain
         filterChain.doFilter(request, response);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
+        // Exclude public endpoints from JWT filtering
         return path.equals("/v3/api-docs") ||
                 path.startsWith("/v3/api-docs/") ||
                 path.equals("/swagger-ui.html") ||
                 path.startsWith("/swagger-ui/") ||
-                path.equals("/actuator/health");
+                path.equals("/actuator/health") ||
+                path.startsWith("/api/v1/auth/") || // Exclude auth endpoints
+                path.equals("/api/v1/stripe/webhook"); // Exclude Stripe webhook
     }
 }

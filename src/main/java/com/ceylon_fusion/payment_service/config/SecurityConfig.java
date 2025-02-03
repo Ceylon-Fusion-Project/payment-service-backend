@@ -25,16 +25,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // Disable CSRF and enable CORS
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable())
+                .cors(cors -> cors.configure(http))
+
+                // Set session management to stateless
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // Configure authorization rules
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()  // Auth endpoints public
 
-                        //Stripe webhook endpoint
+                        // Stripe webhook endpoint
                         .requestMatchers("/api/v1/stripe/webhook").permitAll()
 
                         // Payment endpoints
@@ -57,6 +63,8 @@ public class SecurityConfig {
                         // Any other request needs authentication
                         .anyRequest().authenticated()
                 )
+
+                // Add JWT filter before the default UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

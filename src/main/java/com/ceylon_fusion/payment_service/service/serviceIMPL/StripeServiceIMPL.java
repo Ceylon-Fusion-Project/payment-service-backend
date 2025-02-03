@@ -88,10 +88,23 @@ public class StripeServiceIMPL implements StripeService {
         }
     }
 
-    @Override
-    public void validateWebhookSignature(String payload, String sigHeader) {
-
-    }
+//    @Override
+//    public void validateWebhookSignature(String payload, String sigHeader) {
+//        try {
+//            // Verify webhook signature using Stripe's SDK
+//            Event.constructEvent(
+//                    payload,
+//                    sigHeader,
+//                    webhookSecret
+//            );
+//        } catch (SignatureVerificationException e) {
+//            log.error("Invalid webhook signature: {}", e.getMessage());
+//            throw new RuntimeException("Invalid webhook signature", e);
+//        } catch (Exception e) {
+//            log.error("Error validating webhook: {}", e.getMessage());
+//            throw new RuntimeException("Error validating webhook", e);
+//        }
+//    }
 
     @Override
     public String attachPaymentMethod(String customerId, String paymentMethodId) {
@@ -162,6 +175,11 @@ public class StripeServiceIMPL implements StripeService {
             default:
                 log.info("Unhandled event type: {}", eventType);
         }
+    }
+
+    @Override
+    public void validateWebhookSignature(String payload, String signature) {
+
     }
 
     private void handlePaymentIntentSucceeded(PaymentIntent paymentIntent) {

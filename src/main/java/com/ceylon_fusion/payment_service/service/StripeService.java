@@ -12,11 +12,13 @@ public interface StripeService {
 
     Refund createRefund(String paymentIntentId, Double amount);
 
-    void validateWebhookSignature(String payload, String sigHeader);
+   // void validateWebhookSignature(String payload, String sigHeader);
 
     String attachPaymentMethod(String customerId, String paymentMethodId);
 
     PaymentIntent retrievePaymentIntent(String paymentIntentId);
 
     void handleStripeEvent(String eventType, StripeObject stripeObject);
+
+    void validateWebhookSignature(String payload, String signature);
 }

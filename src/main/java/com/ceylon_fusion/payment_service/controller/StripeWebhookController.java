@@ -31,7 +31,7 @@ public class StripeWebhookController {
     @Value("${stripe.webhook.secret}")
     private String webhookSecret;
 
-    @PostMapping("/stripe-webhook")
+    @PostMapping("/handle-stripe-webhook")
     public ResponseEntity<StandardResponse> handleStripeWebhook(
             @RequestBody String payload,
             @RequestHeader("Stripe-Signature") String sigHeader) {
