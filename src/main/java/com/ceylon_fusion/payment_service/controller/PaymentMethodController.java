@@ -89,7 +89,7 @@ public class PaymentMethodController {
         }
     }
 
-    @PutMapping(path = "/update-payment-method",params = "id")
+    @PatchMapping(path = "/update-payment-method",params = "id")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update payment method (Admin only)")
     public ResponseEntity<StandardResponse> updatePaymentMethod(

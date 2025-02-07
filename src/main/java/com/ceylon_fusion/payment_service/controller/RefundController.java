@@ -119,7 +119,7 @@ public class RefundController {
             );
         }
     }
-    @PutMapping(path ="/update-refund-status ",params = "refundId")
+    @PatchMapping(path ="/update-refund-status ",params = "refundId")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update refund status (Admin only)")
     public ResponseEntity<StandardResponse> updateRefundStatus(

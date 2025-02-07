@@ -221,7 +221,7 @@ public class PaymentController {
         }
     }
 
-    @PutMapping(path="/update-payment", params = "paymentId")
+    @PatchMapping(path="/update-payment", params = "paymentId")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update payment")
     public ResponseEntity<StandardResponse> updatePayment(
@@ -255,7 +255,7 @@ public class PaymentController {
         }
     }
     // Update PaymentController with new endpoint
-    @PutMapping(path = "/cancel-order-payment", params = "orderId")
+    @PatchMapping(path = "/cancel-order-payment", params = "orderId")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Cancel an order payment using order ID")
     public ResponseEntity<StandardResponse> cancelOrderPaymentByOrderId(
