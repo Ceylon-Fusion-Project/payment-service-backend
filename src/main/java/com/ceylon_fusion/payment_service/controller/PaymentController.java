@@ -102,8 +102,8 @@ public class PaymentController {
             StandardResponseDTO standardResponse = new StandardResponseDTO(
                     true,  // success flag
                     response.getPaymentId(),  // payment ID
-                    null,// booking ID
-                    bookingRequestDTO.getBookingId()
+                    null,//orderId
+                    bookingRequestDTO.getBookingId() //bookingId
             );
 
             return ResponseEntity
