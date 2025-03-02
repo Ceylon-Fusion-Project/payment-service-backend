@@ -89,11 +89,10 @@ public class PaymentController {
     }
     @PostMapping(path = "/payment-process-booking")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    @Operation(summary = "Create a new Order payment")
+    @Operation(summary = "Create a new Booking payment")
     public ResponseEntity<StandardResponseDTO> saveBookingPayment(
             @RequestBody BookingRequestDTO bookingRequestDTO) {
         try {
-            // Convert OrderRequestDTO to CreatePaymentRequestDTO
             CreatePaymentRequestDTO createPaymentRequestDTO = paymentMapper.bookingRequestDTOToCreatePaymentRequestDTO(bookingRequestDTO);
 
             // Process the payment
@@ -103,8 +102,8 @@ public class PaymentController {
             StandardResponseDTO standardResponse = new StandardResponseDTO(
                     true,  // success flag
                     response.getPaymentId(),  // payment ID
-                    bookingRequestDTO.getBookingId(),  // order ID
-                    null  // booking ID (null for order payments)
+                    null,// booking ID
+                    bookingRequestDTO.getBookingId()
             );
 
             return ResponseEntity
@@ -116,8 +115,8 @@ public class PaymentController {
             StandardResponseDTO errorResponse = new StandardResponseDTO(
                     false,  // success flag
                     null,   // payment ID
-                    bookingRequestDTO.getBookingId(),  // order ID
-                    null    // booking ID
+                   null,  // order ID
+                    bookingRequestDTO.getBookingId()   // booking ID
             );
 
             return ResponseEntity
