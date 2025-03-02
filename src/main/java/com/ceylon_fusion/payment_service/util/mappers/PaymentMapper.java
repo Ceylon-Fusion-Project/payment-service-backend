@@ -58,4 +58,6 @@ public interface PaymentMapper {
                 .status(payment.getPaymentStatus())
                 .build();
     }
+
+    CreatePaymentRequestDTO bookingRequestDTOToCreatePaymentRequestDTO(BookingRequestDTO bookingRequestDTO);
 }

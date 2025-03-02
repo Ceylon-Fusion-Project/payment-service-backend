@@ -87,6 +87,44 @@ public class PaymentController {
                     .body(errorResponse);
         }
     }
+    @PostMapping(path = "/payment-process-booking")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Create a new Order payment")
+    public ResponseEntity<StandardResponseDTO> saveBookingPayment(
+            @RequestBody BookingRequestDTO bookingRequestDTO) {
+        try {
+            // Convert OrderRequestDTO to CreatePaymentRequestDTO
+            CreatePaymentRequestDTO createPaymentRequestDTO = paymentMapper.bookingRequestDTOToCreatePaymentRequestDTO(bookingRequestDTO);
+
+            // Process the payment
+            PaymentDetailsResponseDTO response = paymentService.saveOrderPayment(createPaymentRequestDTO);
+
+            // Create success response
+            StandardResponseDTO standardResponse = new StandardResponseDTO(
+                    true,  // success flag
+                    response.getPaymentId(),  // payment ID
+                    bookingRequestDTO.getBookingId(),  // order ID
+                    null  // booking ID (null for order payments)
+            );
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(standardResponse);
+
+        } catch (Exception e) {
+            // Create error response
+            StandardResponseDTO errorResponse = new StandardResponseDTO(
+                    false,  // success flag
+                    null,   // payment ID
+                    bookingRequestDTO.getBookingId(),  // order ID
+                    null    // booking ID
+            );
+
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(errorResponse);
+        }
+    }
 
 
     @GetMapping(path = "/payment-details", params = "paymentId")
