@@ -13,20 +13,20 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
 @RequestMapping("api/v1/payment-methods")
-@SecurityRequirement(name="bearerAuth")
+//@SecurityRequirement(name="bearerAuth")
 @RequiredArgsConstructor
 public class PaymentMethodController {
 
     private final PaymentMethodService paymentMethodService;
 
     @PostMapping("/create-payment-method")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a new payment method")
     public ResponseEntity<StandardResponseDTO> createPaymentMethod(
             @RequestBody CreatePaymentMethodRequestDTO request) {
@@ -61,7 +61,7 @@ public class PaymentMethodController {
     }
 
     @GetMapping(path = "/get-payment-method-details",params = "id")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payment method by ID")
     public ResponseEntity<StandardResponse> getPaymentMethodById(@RequestParam Long id) {
         try {
@@ -74,7 +74,7 @@ public class PaymentMethodController {
     }
 
     @GetMapping(path = "/all-payment-methods-for-user",params = "userId")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get all payment methods for a user")
     public ResponseEntity<StandardResponse> getUserPaymentMethods(
             @RequestParam Long userId,
@@ -90,7 +90,7 @@ public class PaymentMethodController {
     }
 
     @PatchMapping(path = "/update-payment-method",params = "id")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update payment method (Admin only)")
     public ResponseEntity<StandardResponse> updatePaymentMethod(
             @RequestParam Long id,
@@ -111,7 +111,7 @@ public class PaymentMethodController {
 
 
     @DeleteMapping(path = "/delete-payment-method",params ="id")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete payment method (Admin only)")
     public ResponseEntity<StandardResponse> deletePaymentMethod(@RequestParam Long id) {
         try {

@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -39,7 +39,7 @@ import java.util.Map;
 @CrossOrigin
 @Slf4j
 @Builder
-@SecurityRequirement(name = "bearerAuth")
+//@SecurityRequirement(name = "bearerAuth")
 public class PaymentController {
 
     private final PaymentMethodRepo paymentMethodRepo;
@@ -50,7 +50,7 @@ public class PaymentController {
 
 
     @PostMapping(path = "/payment-process-order")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+   // @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a new Order payment")
     public ResponseEntity<StandardResponseDTO> saveOrderPayment(
             @RequestBody OrderRequestDTO orderRequestDTO) {
@@ -88,7 +88,7 @@ public class PaymentController {
         }
     }
     @PostMapping(path = "/payment-process-booking")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a new Booking payment")
     public ResponseEntity<StandardResponseDTO> saveBookingPayment(
             @RequestBody BookingRequestDTO bookingRequestDTO) {
@@ -127,7 +127,7 @@ public class PaymentController {
 
 
     @GetMapping(path = "/payment-details", params = "paymentId")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payment by ID")
     public ResponseEntity<StandardResponse> getPaymentById(
             @RequestParam(value = "paymentId") Long paymentId
@@ -147,7 +147,7 @@ public class PaymentController {
     }
 
     @GetMapping("/payment-filtering-and-pagination")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+   // @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get all payments with filtering and pagination")
     public ResponseEntity<StandardResponse> getAllPayments(
             @RequestParam(defaultValue = "0") int page,
@@ -181,7 +181,7 @@ public class PaymentController {
     }
 
     @GetMapping("/payment-analytics-and-metrics ")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get payment analytics within date range")
     public ResponseEntity<StandardResponse> getPaymentAnalytics(
             @RequestParam(required = false)
@@ -216,7 +216,7 @@ public class PaymentController {
     }
 
     @GetMapping("/payment-filter-and-pagination")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get payments within date range with filtering and pagination")
     public ResponseEntity<StandardResponse> getPaymentsByDateRange(
             @RequestParam(defaultValue = "0") int page,
@@ -259,7 +259,7 @@ public class PaymentController {
     }
 
     @PatchMapping(path="/update-payment", params = "paymentId")
-    @PreAuthorize("hasRole('ADMIN')")
+   // @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update payment")
     public ResponseEntity<StandardResponse> updatePayment(
             @RequestParam Long paymentId,
@@ -276,7 +276,7 @@ public class PaymentController {
         }
     }
     @DeleteMapping(path = "/delete-payment", params = "paymentId")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete payment")
     public ResponseEntity<StandardResponse> deletePayment(@RequestParam Long paymentId) {
         try {
@@ -293,7 +293,7 @@ public class PaymentController {
     }
     // Update PaymentController with new endpoint
     @PatchMapping(path = "/cancel-order-payment", params = "orderId")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+   // @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Cancel an order payment using order ID")
     public ResponseEntity<StandardResponse> cancelOrderPaymentByOrderId(
             @RequestParam Long orderId) {
@@ -319,7 +319,7 @@ public class PaymentController {
         }
     }
     @PostMapping("/create-stripe-payment-intent")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+   // @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Create a Stripe payment intent")
     public ResponseEntity<StandardResponse> createPaymentIntent(
             @RequestBody CreatePaymentIntentRequest request) {
@@ -349,7 +349,7 @@ public class PaymentController {
         }
     }
     @PostMapping(path = "/confirm-stripe-payment",params = "paymentIntentId")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+   // @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Confirm a Stripe payment")
     public ResponseEntity<StandardResponse> confirmPayment(
             @RequestParam String paymentIntentId) {
@@ -368,7 +368,7 @@ public class PaymentController {
         }
     }
     @GetMapping(path = "/get-payment-intent",params = "paymentIntentId")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<StandardResponse> getPaymentIntent(@RequestParam String paymentIntentId) {
         try {
             PaymentIntent intent = stripeService.retrievePaymentIntent(paymentIntentId);
@@ -379,17 +379,4 @@ public class PaymentController {
                     .body(new StandardResponse(404, e.getMessage(), null));
         }
     }
-
-//    @PostMapping("/handle-stripe-webhook")
-//    public ResponseEntity<StandardResponse> handleStripeWebhook(
-//            @RequestBody String payload,
-//            @RequestHeader("Stripe-Signature") String signature) {
-//        try {
-//            stripeService.validateWebhookSignature(payload, signature);
-//            return ResponseEntity.ok(new StandardResponse(200, "Webhook processed", null));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body(new StandardResponse(400, e.getMessage(), null));
-//        }
-//    }
 }
