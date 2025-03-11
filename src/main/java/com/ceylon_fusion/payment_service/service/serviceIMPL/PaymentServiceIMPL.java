@@ -23,8 +23,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -294,17 +294,17 @@ public class PaymentServiceIMPL implements PaymentService {
             throw new RuntimeException("Cannot cancel a successful payment. Please initiate a refund instead.");
         }
 
-        // Get current authentication
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName();
-
-        // If the user is not an admin, check if they own the order
-        if (!authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            if (!payment.getUserId().toString().equals(currentUsername)) {
-                throw new RuntimeException("You are not authorized to cancel this order payment");
-            }
-        }
+//        // Get current authentication
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String currentUsername = authentication.getName();
+//
+//        // If the user is not an admin, check if they own the order
+//        if (!authentication.getAuthorities().stream()
+//                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+//            if (!payment.getUserId().toString().equals(currentUsername)) {
+//                throw new RuntimeException("You are not authorized to cancel this order payment");
+//            }
+//        }
 
         // Update payment status
         payment.setPaymentStatus(PaymentStatus.CANCELLED);

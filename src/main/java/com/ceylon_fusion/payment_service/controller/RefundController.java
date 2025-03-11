@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -19,14 +19,14 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("api/v1/refunds")
 @CrossOrigin
-@SecurityRequirement(name = "bearerAuth")
+//@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class RefundController {
 
     private final RefundService refundService;
 
     @PostMapping("/initiate-refund")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Initiate a refund (Admin only)")
     public ResponseEntity<StandardResponseDTO> initiateRefund(@RequestBody InitiateRefundRequestDTO request) {
         try {
@@ -64,7 +64,7 @@ public class RefundController {
         }
     }
     @GetMapping(path = "/get-refund-by-id",params = "refundId")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get refund by ID")
     public ResponseEntity<StandardResponse> getRefundById(@RequestParam Long refundId) {
         try {
@@ -77,7 +77,7 @@ public class RefundController {
     }
 
     @GetMapping("/refund-with-pagination ")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+   // @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get all refunds with pagination")
     public ResponseEntity<StandardResponse> getAllRefunds(
             @RequestParam(defaultValue = "0") int page,
@@ -98,7 +98,7 @@ public class RefundController {
         }
     }
     @GetMapping("/refund-by-date-range")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get refunds by date range")
     public ResponseEntity<StandardResponse> getRefundsByDateRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -120,7 +120,7 @@ public class RefundController {
         }
     }
     @PatchMapping(path ="/update-refund-status ",params = "refundId")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update refund status (Admin only)")
     public ResponseEntity<StandardResponse> updateRefundStatus(
             @RequestParam Long refundId,
@@ -139,7 +139,7 @@ public class RefundController {
         }
     }
     @DeleteMapping(path = "cancel-refund", params = "refundId")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Cancel refund (Admin only)")
     public ResponseEntity<StandardResponse> cancelRefund(@RequestParam Long refundId) {
         try {
