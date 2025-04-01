@@ -9,10 +9,11 @@ import com.ceylon_fusion.payment_service.dto.request.PaymentFilterRequestDTO;
 import com.ceylon_fusion.payment_service.dto.request.UpdatePaymentRequestDTO;
 import com.ceylon_fusion.payment_service.dto.response.PaymentDetailsResponseDTO;
 import com.ceylon_fusion.payment_service.entity.Payment;
-import com.ceylon_fusion.payment_service.entity.PaymentMethod;
+//import com.ceylon_fusion.payment_service.entity.PaymentMethod;
 import com.ceylon_fusion.payment_service.entity.enums.Currency;
 import com.ceylon_fusion.payment_service.entity.enums.PaymentStatus;
-import com.ceylon_fusion.payment_service.repo.PaymentMethodRepo;
+//import com.ceylon_fusion.payment_service.repo.PaymentMethodRepo;
+import com.ceylon_fusion.payment_service.entity.enums.PaymentType;
 import com.ceylon_fusion.payment_service.repo.PaymentRepo;
 import com.ceylon_fusion.payment_service.service.PaymentService;
 import com.ceylon_fusion.payment_service.service.StripeService;
@@ -46,7 +47,7 @@ import java.util.stream.Collectors;
 public class PaymentServiceIMPL implements PaymentService {
 
     private final PaymentRepo paymentRepo;
-    private final PaymentMethodRepo paymentMethodRepo;
+//    private final PaymentMethodRepo paymentMethodRepo;
     private final StripeService stripeService;
     private final PaymentMapper paymentMapper;
 
@@ -68,15 +69,32 @@ public class PaymentServiceIMPL implements PaymentService {
         }
 
         // Create a new payment entity from the request DTO
-        Payment payment = paymentMapper.createPaymentRequestDTOToPayment(createPaymentRequestDTO);
-        payment.setPaymentStatus(PaymentStatus.PENDING);
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setCurrency(Currency.USD);
+//        Payment payment = paymentMapper.createPaymentRequestDTOToPayment(createPaymentRequestDTO);
+//        payment.setPaymentStatus(PaymentStatus.PENDING);
+//        payment.setPaymentDate(LocalDateTime.now());
+//        payment.setCurrency(Currency.USD);
 
-        PaymentMethod paymentMethod = paymentMethodRepo.findByUserIdAndIsDefaultTrue(createPaymentRequestDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("No default payment method found for user"));
-        payment.setPaymentMethod(paymentMethod);
+//        PaymentMethod paymentMethod = paymentMethodRepo.findByUserIdAndIsDefaultTrue(createPaymentRequestDTO.getUserId())
+//                .orElseThrow(() -> new RuntimeException("No default payment method found for user"));
+//        payment.setPaymentMethod(paymentMethod);
 
+        Payment payment=new Payment(
+                null,
+                createPaymentRequestDTO.getUserId(),
+                null,
+                createPaymentRequestDTO.getBookingId(),
+                createPaymentRequestDTO.getAmount(),
+                PaymentStatus.PENDING,
+                LocalDateTime.now(),
+                "12345",
+                null,
+                "123654",
+                null,
+                null,
+                Currency.USD,
+                PaymentType.Order_Payment,
+                null
+        );
         Payment savedPayment = paymentRepo.save(payment);
         return paymentMapper.paymentToPaymentDetailsResponseDTO(savedPayment);
     }
@@ -98,18 +116,37 @@ public class PaymentServiceIMPL implements PaymentService {
             throw new IllegalArgumentException("Booking ID cannot be null");
         }
 
-        Long userId = createPaymentRequestDTO.getUserId();
-        PaymentMethod defaultPaymentMethod = paymentMethodRepo.findByUserIdAndIsDefaultTrue(userId)
-                .orElseThrow(() -> new RuntimeException("No default payment method found for user"));
+//        Long userId = createPaymentRequestDTO.getUserId();
+//        PaymentMethod defaultPaymentMethod = paymentMethodRepo.findByUserIdAndIsDefaultTrue(userId)
+//                .orElseThrow(() -> new RuntimeException("No default payment method found for user"));
+//
+//        Payment payment = new Payment();
+//        payment.setUserId(createPaymentRequestDTO.getUserId());
+//        payment.setBookingId(createPaymentRequestDTO.getBookingId());
+//        payment.setAmount(createPaymentRequestDTO.getAmount());
+//        payment.setPaymentStatus(PaymentStatus.PENDING);
+//        payment.setPaymentDate(LocalDateTime.now());
+//        payment.setCurrency(Currency.USD);
+//        payment.setPaymentMethod(defaultPaymentMethod);
 
-        Payment payment = new Payment();
-        payment.setUserId(createPaymentRequestDTO.getUserId());
-        payment.setBookingId(createPaymentRequestDTO.getBookingId());
-        payment.setAmount(createPaymentRequestDTO.getAmount());
-        payment.setPaymentStatus(PaymentStatus.PENDING);
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setCurrency(Currency.USD);
-        payment.setPaymentMethod(defaultPaymentMethod);
+        Payment payment=new Payment(
+                null,
+                createPaymentRequestDTO.getUserId(),
+                null,
+                createPaymentRequestDTO.getBookingId(),
+                createPaymentRequestDTO.getAmount(),
+                PaymentStatus.PENDING,
+                LocalDateTime.now(),
+                "12345",
+                null,
+                "123654",
+                null,
+                null,
+                Currency.USD,
+                PaymentType.Booking_Payment,
+                null
+
+        );
 
         Payment savedPayment = paymentRepo.save(payment);
         return paymentMapper.paymentToPaymentDetailsResponseDTO(savedPayment);
@@ -261,11 +298,11 @@ public class PaymentServiceIMPL implements PaymentService {
         if (updatePaymentRequestDTO.getPaymentDate() != null) {
             payment.setPaymentDate(updatePaymentRequestDTO.getPaymentDate());
         }
-        if (updatePaymentRequestDTO.getPaymentMethodId() != null) {
-            PaymentMethod paymentMethod = paymentMethodRepo.findById(updatePaymentRequestDTO.getPaymentMethodId())
-                    .orElseThrow(() -> new RuntimeException("Payment method not found"));
-            payment.setPaymentMethod(paymentMethod);
-        }
+//        if (updatePaymentRequestDTO.getPaymentMethodId() != null) {
+//            PaymentMethod paymentMethod = paymentMethodRepo.findById(updatePaymentRequestDTO.getPaymentMethodId())
+//                    .orElseThrow(() -> new RuntimeException("Payment method not found"));
+//            payment.setPaymentMethod(paymentMethod);
+//        }
 
         Payment updatedPayment = paymentRepo.save(payment);
         return paymentMapper.paymentToPaymentDetailsResponseDTO(updatedPayment);
