@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InitiateRefundRequestDTO {
-
-    private Long paymentId;
-    private String refundReason;
+public class OrderRequestDTO {
+    private Long userId;
+    private Long orderId;
+    private Double amount;
 }

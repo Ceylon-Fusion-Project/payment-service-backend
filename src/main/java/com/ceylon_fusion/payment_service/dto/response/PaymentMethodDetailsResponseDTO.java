@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class PaymentMethodDetailsResponseDTO {
 
     private Long paymentMethodId;
-    private String methodNAme;
+    private String methodName;
     private Boolean isActive;
     private Boolean isDefault;
     private Provider provider;

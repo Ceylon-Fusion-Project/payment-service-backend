@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 
 @Data
 @AllArgsConstructor
@@ -12,8 +14,10 @@ import lombok.NoArgsConstructor;
 public class RefundDTO {
 
     private Long refundId;
-    private String paymentId;
+    private Long paymentId;
     private RefundStatus refundStatus;
+    private Double amount;
+
 
 
 }
