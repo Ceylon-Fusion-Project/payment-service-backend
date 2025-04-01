@@ -96,7 +96,7 @@ public class PaymentController {
             CreatePaymentRequestDTO createPaymentRequestDTO = paymentMapper.bookingRequestDTOToCreatePaymentRequestDTO(bookingRequestDTO);
 
             // Process the payment
-            PaymentDetailsResponseDTO response = paymentService.saveOrderPayment(createPaymentRequestDTO);
+            PaymentDetailsResponseDTO response = paymentService.saveBookingPayment(createPaymentRequestDTO);
 
             // Create success response
             StandardResponseDTO standardResponse = new StandardResponseDTO(
