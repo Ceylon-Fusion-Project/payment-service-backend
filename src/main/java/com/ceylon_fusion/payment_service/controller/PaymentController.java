@@ -8,9 +8,9 @@ import com.ceylon_fusion.payment_service.dto.response.StandardResponseDTO;
 import com.ceylon_fusion.payment_service.dto.stripe.CreatePaymentIntentRequest;
 import com.ceylon_fusion.payment_service.dto.stripe.PaymentIntentResponse;
 import com.ceylon_fusion.payment_service.entity.Payment;
-import com.ceylon_fusion.payment_service.entity.PaymentMethod;
+//import com.ceylon_fusion.payment_service.entity.PaymentMethod;
 import com.ceylon_fusion.payment_service.entity.enums.PaymentStatus;
-import com.ceylon_fusion.payment_service.repo.PaymentMethodRepo;
+//import com.ceylon_fusion.payment_service.repo.PaymentMethodRepo;
 import com.ceylon_fusion.payment_service.repo.PaymentRepo;
 import com.ceylon_fusion.payment_service.service.PaymentService;
 import com.ceylon_fusion.payment_service.service.StripeService;
@@ -42,7 +42,7 @@ import java.util.Map;
 //@SecurityRequirement(name = "bearerAuth")
 public class PaymentController {
 
-    private final PaymentMethodRepo paymentMethodRepo;
+    //private final PaymentMethodRepo paymentMethodRepo;
     private  final PaymentService paymentService;
     private final StripeService stripeService;
     private final PaymentRepo paymentRepo;
