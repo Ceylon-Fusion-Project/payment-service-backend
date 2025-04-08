@@ -16,8 +16,10 @@ import com.ceylon_fusion.payment_service.service.PaymentService;
 import com.ceylon_fusion.payment_service.service.StripeService;
 import com.ceylon_fusion.payment_service.util.StandardResponse;
 import com.ceylon_fusion.payment_service.util.mappers.PaymentMapper;
+import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
+import com.stripe.param.PaymentIntentCreateParams;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -29,8 +31,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -47,6 +52,8 @@ public class PaymentController {
     private final StripeService stripeService;
     private final PaymentRepo paymentRepo;
     private final PaymentMapper paymentMapper;
+    @Value("${stripe.secret.key}")
+    private String stripeSecretKey;
 
 
     @PostMapping(path = "/payment-process-order")
@@ -377,6 +384,55 @@ public class PaymentController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new StandardResponse(404, e.getMessage(), null));
+        }
+    }
+
+//    @PostMapping("/create-payment-intent")
+//    public Map<String, String> createPaymentIntent(@RequestBody Map<String, Object> data) throws StripeException {
+//        Stripe.apiKey = stripeSecretKey;
+//
+//        Long amount = Long.parseLong(data.get("amount").toString()); // amount in cents
+//
+//        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
+//                .setAmount(amount)
+//                .setCurrency("usd")
+//                .build();
+//
+//        PaymentIntent paymentIntent = PaymentIntent.create(params);
+//        Map<String, String> responseData = new HashMap<>();
+//        responseData.put("clientSecret", paymentIntent.getClientSecret());
+//
+//        return responseData;
+//    }
+
+    @PostMapping("/create-payment-intent")
+    public ResponseEntity<?> createPaymentIntent(@RequestBody Map<String, Object> data) {
+        try {
+            Stripe.apiKey = stripeSecretKey;
+
+            if (!data.containsKey("amount")) {
+                return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Amount is required"));
+            }
+
+            Long amount = Long.parseLong(data.get("amount").toString());
+
+            PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
+                    .setAmount(amount)
+                    .setCurrency("usd")
+                    .addPaymentMethodType("card")
+                    .build();
+
+            PaymentIntent paymentIntent = PaymentIntent.create(params);
+
+            return ResponseEntity.ok(Collections.singletonMap("clientSecret", paymentIntent.getClientSecret()));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Invalid amount format"));
+        } catch (StripeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Payment processing failed: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Collections.singletonMap("error", "Server error: " + e.getMessage()));
         }
     }
 }
