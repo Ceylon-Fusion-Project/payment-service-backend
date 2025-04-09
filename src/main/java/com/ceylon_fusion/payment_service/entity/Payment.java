@@ -84,13 +84,6 @@ public class Payment {
 
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Refund> refunds = new HashSet<>();
-
-//    public boolean isRefundable() {
-//        return this.paymentStatus == PaymentStatus.SUCCEEDED;
-//    }
-//
-//    public boolean isCancellable() {
-//        return this.paymentStatus == PaymentStatus.PENDING;
-//    }
+    
 
 }

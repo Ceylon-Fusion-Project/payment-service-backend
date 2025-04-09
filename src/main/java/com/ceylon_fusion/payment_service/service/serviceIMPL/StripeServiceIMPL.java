@@ -28,7 +28,7 @@ import java.util.Map;
 @Slf4j
 public class StripeServiceIMPL implements StripeService {
 
-    @Value("${secret_key}")
+    @Value("${stripe.secret.key}")
     private String secretKey;
 
     @Value("${stripe.webhook.secret}")
